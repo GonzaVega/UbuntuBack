@@ -1,10 +1,10 @@
-package semillero.ecosistema;
+package semillero.ubuntu;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EcosistemaApplicationTests {
+class UbuntuApplicationTests {
 
 	@Test
 	void contextLoads() {

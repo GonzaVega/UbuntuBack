@@ -9,11 +9,11 @@
 		<relativePath/>
 	</parent>
 	<groupId>quinto.site</groupId>
-	<artifactId>ecosistema</artifactId>
+	<artifactId>ubuntu</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>Ecosistema</name>
-	<description>Directorio de Impacto</description>
+	<name>Ubuntu</name>
+	<description>Financiamiento sostenible</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
