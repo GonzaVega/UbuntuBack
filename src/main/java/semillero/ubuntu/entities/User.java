@@ -13,7 +13,7 @@ import semillero.ubuntu.enums.Role;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_control", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
+@Table(name = "user_control", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 public class User {
 
     @Id
