@@ -17,8 +17,8 @@ import semillero.ubuntu.enums.Role;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String userId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long userId;
 
     @Basic
     @Size(min = 2, max = 60)
@@ -40,4 +40,11 @@ public class User {
     @Size(min = 2, max = 30)
     @Column(nullable = false, length = 30)
     String phone;
+
+    @PrePersist
+    void prePersistDisabled() {
+        if (disabled == null) {
+            disabled = true;
+        }
+    }
 }
