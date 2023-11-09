@@ -19,6 +19,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public Category createCategory(Category category) {
+
+        // Guarda la categoría en la base de datos
+        return categoryRepository.save(category);
+
+    }
+
+    @Override
     public List<Category> getAllCategories() {
         // Si no hay categorías registradas, lanza una excepción
         if (categoryRepository.count() == 0) {
