@@ -23,6 +23,15 @@ public interface CategoryService {
      */
     List<Category> getAllCategories();
 
+    /*
+     *
+     * Obtiene una categoría por su nombre.
+     * @param name El nombre de la categoría a buscar.
+     * @return Un objeto Category que representa la categoría buscada.
+     *
+     */
+    Category getCategoryByName(String name);
+
 
 
 
