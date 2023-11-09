@@ -47,8 +47,10 @@ public class DataInitializer implements ApplicationRunner {
 
         // Guarda las categorías en la base de datos
         for (Category category : categories.values()) {
-            categoryService.createCategory(category);
+            // Si la categoría no existe, la crea
+            if (categoryService.getCategoryByName(category.getNombre()) == null) {
+                categoryService.createCategory(category);
+            }
         }
-
     }
 }
