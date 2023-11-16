@@ -17,6 +17,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+
     @Override
     public User saveUser(User user) {
         logger.info("Save Employee");
@@ -53,5 +54,11 @@ public class UserServiceImpl implements UserService {
         }
 
         return disableUser;
+    }
+
+    @Override
+    public User findUserByEmail(String email) {
+        logger.info("Find User by Email");
+        return userRepository.findByEmail(email);
     }
 }

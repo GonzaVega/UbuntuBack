@@ -1,4 +1,4 @@
-package semillero.ubuntu.config;
+package semillero.ubuntu.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,15 +17,14 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> {
-            auth.requestMatchers("/**").permitAll();
-                    //auth.requestMatchers("/admin").hasRole("ADMIN");
-                    //auth.requestMatchers("/user").hasAnyRole("USER","ADMIN");
+            auth.requestMatchers("/").permitAll();
+                    auth.requestMatchers("/admin/**").hasRole("ADMIN");
+                    auth.requestMatchers("/user").hasAnyRole("USER","ADMIN");
             auth.anyRequest().authenticated();
         })
-                //.oauth2Login(withDefaults())
-                .oauth2Login(OAuth2LoginConfigurer::disable)  // Deshabilita completamente la autenticación OAuth2
+                .oauth2Login(withDefaults())
+                //.oauth2Login(OAuth2LoginConfigurer::disable)  // Deshabilita completamente la autenticación OAuth2
                 .formLogin(withDefaults())
-                .formLogin(login -> login.disable())
                 .build();
     }
 }
