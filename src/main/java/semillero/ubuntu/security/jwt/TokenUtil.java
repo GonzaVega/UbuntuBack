@@ -1,4 +1,4 @@
-package semillero.ubuntu.config.security;
+package semillero.ubuntu.security.jwt;
 import io.jsonwebtoken.Jwts;
 import semillero.ubuntu.entities.User;
 import java.util.Date;

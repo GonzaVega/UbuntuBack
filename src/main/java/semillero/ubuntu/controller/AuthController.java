@@ -4,7 +4,7 @@ package semillero.ubuntu.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import semillero.ubuntu.config.security.TokenUtil;
+import semillero.ubuntu.security.jwt.TokenUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
