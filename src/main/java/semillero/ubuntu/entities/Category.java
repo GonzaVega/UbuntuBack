@@ -1,9 +1,6 @@
 package semillero.ubuntu.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Entity // Indica que la clase es una entidad
 @Data // Genera los getters y setters
 @NoArgsConstructor // Genera un constructor vacío
+@Table(name = "category")
 public class Category {
 
     @Id
