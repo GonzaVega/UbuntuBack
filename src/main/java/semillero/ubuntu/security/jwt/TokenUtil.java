@@ -1,30 +1,44 @@
 package semillero.ubuntu.security.jwt;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import semillero.ubuntu.entities.User;
 import java.util.Date;
-import org.springframework.stereotype.Component;
+import java.util.HashMap;
+import java.util.Map;
 
 
-@Component
+@Service
 public class TokenUtil {
 
-    private static final String SECRET_KEY = "yasemeolvido";
+    @Value("${jwt.secret}")
+    private String JWT_SECRET_KEY;
+    private static final long EXPIRATION = 864000000L; // 10 days
 
-    public String generateToken(User user) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + 864000000);  // válido por 10 días
+    public String generateToken(User user, String picture) {
+        Date issuedAt = new Date(System.currentTimeMillis());
+        Date expiryDate = new Date(issuedAt.getTime() + EXPIRATION);  // válido por 10 días
+
+        Map<String, Object> claims = genereteClaims(user, picture);
 
         return Jwts.builder()
-                .setSubject(Long.toString(user.getUserId()))
-                .claim("email", user.getEmail())
-                .claim("firstName", user.getName())
-                .claim("lastName", user.getLastName())
-                //.claim("photoUrl", user.getPhotoUrl())
-                .claim("role", user.getRole())
-                .setIssuedAt(now)
+                .setSubject(user.getEmail())
+                .addClaims(claims)
+                .setIssuedAt(issuedAt)
                 .setExpiration(expiryDate)
-                //.signWith(SignatureAlgorithm.HS512, SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY)
                 .compact();
+    }
+
+    private Map<String, Object> genereteClaims (User user,String picture) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("name", user.getFullName());
+        claims.put("role", user.getRole().name());
+        claims.put("email", user.getEmail());
+        claims.put("picture", picture);
+
+        return claims;
     }
 }
 

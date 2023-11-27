@@ -6,7 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import semillero.ubuntu.enums.Role;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
@@ -14,7 +20,7 @@ import semillero.ubuntu.enums.Role;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_control", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -46,5 +52,49 @@ public class User {
         if (disabled == null) {
             disabled = true;
         }
+    }
+
+    public String getFullName(){
+        StringBuilder fullName = new StringBuilder();
+        fullName.append(name);
+        fullName.append(" ");
+        fullName.append(lastName);
+
+        return fullName.toString();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
     }
 }
