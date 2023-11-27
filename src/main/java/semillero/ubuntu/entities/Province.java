@@ -19,4 +19,5 @@ public class Province {
     @JoinColumn(name = "country_id", nullable = false)
      Country country;
 
+
 }

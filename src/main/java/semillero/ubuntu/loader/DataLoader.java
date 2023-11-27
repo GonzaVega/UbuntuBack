@@ -27,4 +27,5 @@ public class DataLoader implements CommandLineRunner {
         buenosAires.setCountry(argentina);
         provinceRepository.save(buenosAires);
     }
+
 }

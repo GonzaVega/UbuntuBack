@@ -12,4 +12,5 @@ public class Country {
 
     @Column(nullable = false)
      String name;
+
 }

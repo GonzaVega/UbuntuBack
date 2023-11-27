@@ -7,5 +7,6 @@ import java.util.List;
 
 
 public interface ProvinceRepository extends JpaRepository<Province, Long> {
-    List<Province> findByCountryName(String CountryName);;
+    List<Province> findByCountryName(String CountryName);
+
 }
