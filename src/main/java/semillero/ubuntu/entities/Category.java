@@ -23,6 +23,10 @@ public class Category {
 
     // Getters y setters generados automáticamente por Lombok.
 
+    // Constructor que acepta un ID como número
+    public Category(Long id) {
+        this.id = id;
+    }
     @Override
     public String toString() {
         return "Categoria{" +
