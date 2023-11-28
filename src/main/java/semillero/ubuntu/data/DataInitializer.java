@@ -30,25 +30,25 @@ public class DataInitializer implements ApplicationRunner {
 
         // Crea las categorías
         Category category1 = new Category();
-        category1.setNombre("Economía social/Desarrollo local/ Inclusión financiera");
-        categories.put(category1.getNombre(), category1);
+        category1.setName("Economía social/Desarrollo local/ Inclusión financiera");
+        categories.put(category1.getName(), category1);
 
         Category category2 = new Category();
-        category2.setNombre("Agroecología/Orgánicos/Alimentación saludable");
-        categories.put(category2.getNombre(), category2);
+        category2.setName("Agroecología/Orgánicos/Alimentación saludable");
+        categories.put(category2.getName(), category2);
 
         Category category3 = new Category();
-        category3.setNombre("Conservación/Regeneración/Servicios ecosistémicos");
-        categories.put(category3.getNombre(), category3);
+        category3.setName("Conservación/Regeneración/Servicios ecosistémicos");
+        categories.put(category3.getName(), category3);
 
         Category category4 = new Category();
-        category4.setNombre("Empresas/Organismos de impacto/Economía circular");
-        categories.put(category4.getNombre(), category4);
+        category4.setName("Empresas/Organismos de impacto/Economía circular");
+        categories.put(category4.getName(), category4);
 
         // Guarda las categorías en la base de datos
         for (Category category : categories.values()) {
             // Si la categoría no existe, la crea
-            if (categoryService.getCategoryByName(category.getNombre()) == null) {
+            if (categoryService.getCategoryByName(category.getName()) == null) {
                 categoryService.createCategory(category);
             }
         }
