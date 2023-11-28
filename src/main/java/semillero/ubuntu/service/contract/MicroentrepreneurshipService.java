@@ -2,6 +2,8 @@ package semillero.ubuntu.service.contract;
 
 import semillero.ubuntu.entities.Microentrepreneurship;
 
+import java.util.List;
+
 public interface MicroentrepreneurshipService {
 
     Microentrepreneurship createMicroentrepreneurship(Microentrepreneurship microentrepreneurship);
@@ -9,5 +11,7 @@ public interface MicroentrepreneurshipService {
     void hideMicroentrepreneurship(Long id);
     // Obtener microemprendimientos por id
     Microentrepreneurship getMicroentrepreneurshipById(Long id);
+
+    List<Microentrepreneurship> getAllMicroentrepreneurships();
 
 }
