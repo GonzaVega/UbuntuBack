@@ -16,7 +16,7 @@ public class Category {
     private Long id;
 
     @NotNull
-    private String nombre;
+    private String name;
 
     // Constructor sin argumentos generado automáticamente por Lombok.
     // Este constructor se usa en la inicialización de datos.
@@ -31,10 +31,8 @@ public class Category {
     public String toString() {
         return "Categoria{" +
                 "id=" + id +
-                ", nombre='" + nombre + '\'' +
+                ", nombre='" + name + '\'' +
                 '}';
     }
-
-
 
 }
