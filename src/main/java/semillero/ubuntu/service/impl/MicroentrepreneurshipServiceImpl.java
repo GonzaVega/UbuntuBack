@@ -18,7 +18,6 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
 
     @Override
     public Microentrepreneurship createMicroentrepreneurship(Microentrepreneurship microentrepreneurship) {
-        microentrepreneurship.setIsActive(false);
     return microentrepreneurshipRepository.save(microentrepreneurship);
     }
 
