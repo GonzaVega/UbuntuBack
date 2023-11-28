@@ -41,4 +41,7 @@ public class Message {
     private String phone;
 
     private LocalDate sentDate;
+
+    //@ManyToOne
+    //private Microenterprise microenterprise;
 }
