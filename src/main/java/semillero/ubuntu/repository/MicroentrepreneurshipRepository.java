@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface MicroentrepreneurshipRepository extends JpaRepository<Microentrepreneurship, Long> {
     // Toca de esta manera  por la lazy loading, 
-    @Query("SELECT m FROM Microentrepreneurship m LEFT JOIN FETCH m.imagenes WHERE m.id = :id")
-    Optional<Microentrepreneurship> findByIdWithImagenes(@Param("id") Long id);
+    @Query("SELECT m FROM Microentrepreneurship m LEFT JOIN FETCH m.images WHERE m.id = :id")
+    Optional<Microentrepreneurship> findByIdWithImages(@Param("id") Long id);
 
 }
