@@ -118,4 +118,10 @@ public class MicroentrepreneurshipController {
         }
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<Microentrepreneurship>> getAllMicroentrepreneurships() {
+        List<Microentrepreneurship> microentrepreneurships = microentrepreneurshipService.getAllMicroentrepreneurships();
+        return new ResponseEntity<>(microentrepreneurships, HttpStatus.OK);
+    }
+
 }
