@@ -2,6 +2,7 @@ package semillero.ubuntu.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +24,8 @@ public class Microentrepreneurship {
     private Long id;
 
     @NotBlank(message = "El nombre no puede estar en blanco")
-    @Size(min =3 , message = "El nombre debe tener más de 3 caracteres")
+    @Size(min = 3, message = "El nombre debe tener más de 3 caracteres")
+    @NotNull(message = "El nombre no puede ser nulo")
     private String nombre;
 
     @NotBlank(message = "El país no puede estar en blanco")
@@ -58,7 +60,6 @@ public class Microentrepreneurship {
     private String descripcion;
 
     // Mas información
-    @NotBlank(message = "La información adicional no puede estar en blanco")
     @Size(max = 300, message = "La información adicional no puede tener más de 300 caracteres")
     private String informacion_adicional;
 
