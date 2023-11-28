@@ -9,6 +9,5 @@ import semillero.ubuntu.entities.Category;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     // Encontrar una categoría por nombre con sentencia SQL
-
-     Category findByNombre(String nombre);
+     Category findByName(String nombre);
 }
