@@ -2,9 +2,8 @@ package semillero.ubuntu.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import semillero.ubuntu.entities.User;
+import semillero.ubuntu.entities.Message;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
-
+public interface MessageRepository extends JpaRepository <Message, Long> {
 }

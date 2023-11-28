@@ -2,15 +2,14 @@ package semillero.ubuntu.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import semillero.ubuntu.enums.Role;
 
 @Entity
 @Data
 @Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_control", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
