@@ -26,42 +26,42 @@ public class Microentrepreneurship {
     @NotBlank(message = "El nombre no puede estar en blanco")
     @Size(min = 3, message = "El nombre debe tener más de 3 caracteres")
     @NotNull(message = "El nombre no puede ser nulo")
-    private String nombre;
+    private String name;
 
     @NotBlank(message = "El país no puede estar en blanco")
-    private String pais;
+    private String country;
 
     @NotBlank(message = "La provincia no puede estar en blanco")
     @Size(max = 255, message = "La provincia no puede tener más de 255 caracteres")
     @Size(min = 3, message = "La provincia debe tener más de 3 caracteres")
-    private String provincia;
+    private String province;
 
     @NotBlank(message = "La ciudad no puede estar en blanco")
     @Size(max = 255, message = "La ciudad no puede tener más de 255 caracteres")
     @Size(min = 3, message = "La ciudad debe tener más de 3 caracteres")
-    private String ciudad;
+    private String city;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id") // Nombre de la columna en la tabla que representa la relación con la categoría
-    private Category categoria; // Categoría del microemprendimiento
+    private Category category; // Categoría del microemprendimiento
 
     @NotBlank(message = "La subcategoría no puede estar en blanco")
     @Size(max = 255, message = "La subcategoría no puede tener más de 255 caracteres")
-    private String subCategoria;
+    private String subCategory;
 
     @ElementCollection // Indica que la lista es una colección de elementos,facilita el manejo de colecciones de tipos básicos o en JPA sin necesidad de crear una entidad separada para la colección.
     @Size(max = 3, message = "La lista de imágenes no puede tener más de 3 elementos")
-    private List<String> imagenes;
+    private List<String> images;
 
-    private Boolean activo = false; // Inicia con valor false por defecto
+    private Boolean isActive = false; // Inicia con valor false por defecto
 
     @NotBlank(message = "La descripción no puede estar en blanco")
     @Size(max = 300, message = "La descripción no puede tener más de 300 caracteres")
-    private String descripcion;
+    private String description;
 
     // Mas información
     @Size(max = 300, message = "La información adicional no puede tener más de 300 caracteres")
-    private String informacion_adicional;
+    private String moreInfo;
 
     // Getters, setters y constructor generados automáticamente por Lombok
 
