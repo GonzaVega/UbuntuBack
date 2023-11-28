@@ -1,5 +1,6 @@
 package semillero.ubuntu.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -97,6 +98,24 @@ public class MicroentrepreneurshipController {
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    @PatchMapping("/{id}/hide")
+    public ResponseEntity<?> hideMicroentrepreneurship(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            microentrepreneurshipService.hideMicroentrepreneurship(id);
+            response.put("message", "Microemprendimiento ocultado con éxito");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (EntityNotFoundException e) {
+            response.put("error", e.getMessage());
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
