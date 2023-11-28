@@ -6,6 +6,8 @@ import semillero.ubuntu.entities.Microentrepreneurship;
 import semillero.ubuntu.repository.MicroentrepreneurshipRepository;
 import semillero.ubuntu.service.contract.MicroentrepreneurshipService;
 
+import java.util.List;
+
 @Service
 public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipService {
 
@@ -23,6 +25,7 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
 
     @Override
     public Microentrepreneurship editMicroentrepreneurship(Long id,Microentrepreneurship microentrepreneurship) {
+        
         // Verifica si el microemprendimiento existe
         Microentrepreneurship existingMicroentrepreneurship = microentrepreneurshipRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Microemprendimiento no encontrado con ID: " + id));
@@ -66,6 +69,12 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
 
         // Retorna el microemprendimiento
         return microentrepreneurship;
+    }
+
+    @Override
+    public List<Microentrepreneurship> getAllMicroentrepreneurships() {
+        // Retorna todos los microemprendimientos
+        return microentrepreneurshipRepository.findAll();
     }
 
 }
