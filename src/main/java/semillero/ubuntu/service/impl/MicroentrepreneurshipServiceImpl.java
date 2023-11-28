@@ -16,10 +16,9 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         this.microentrepreneurshipRepository = microentrepreneurshipRepository;
     }
 
-
     @Override
     public Microentrepreneurship createMicroentrepreneurship(Microentrepreneurship microentrepreneurship) {
-        microentrepreneurship.setActivo(false);
+        microentrepreneurship.setIsActive(false);
     return microentrepreneurshipRepository.save(microentrepreneurship);
     }
 
@@ -30,14 +29,15 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
                 .orElseThrow(() -> new EntityNotFoundException("Microentrepreneurship not found with id: " + id));
 
         // Actualiza los campos necesarios
-        existingMicroentrepreneurship.setNombre(existingMicroentrepreneurship.getNombre());
-        existingMicroentrepreneurship.setDescripcion(existingMicroentrepreneurship.getDescripcion());
-        existingMicroentrepreneurship.setCiudad(existingMicroentrepreneurship.getCiudad());
-        existingMicroentrepreneurship.setCategoria(existingMicroentrepreneurship.getCategoria());
-        existingMicroentrepreneurship.setSubCategoria(existingMicroentrepreneurship.getSubCategoria());
-        existingMicroentrepreneurship.setImagenes(existingMicroentrepreneurship.getImagenes());
-        existingMicroentrepreneurship.setActivo(existingMicroentrepreneurship.getActivo());
-        existingMicroentrepreneurship.setInformacion_adicional(existingMicroentrepreneurship.getInformacion_adicional());
+        existingMicroentrepreneurship.setName(existingMicroentrepreneurship.getName());
+        existingMicroentrepreneurship.setDescription(existingMicroentrepreneurship.getDescription());
+        existingMicroentrepreneurship.setCity(existingMicroentrepreneurship.getCity());
+        existingMicroentrepreneurship.setCategory(existingMicroentrepreneurship.getCategory());
+        existingMicroentrepreneurship.setSubCategory(existingMicroentrepreneurship.getSubCategory());
+        existingMicroentrepreneurship.setImages(existingMicroentrepreneurship.getImages());
+        existingMicroentrepreneurship.setIsActive(existingMicroentrepreneurship.getIsActive());
+        existingMicroentrepreneurship.setMoreInfo(existingMicroentrepreneurship.getMoreInfo());
+
 
         // Guarda la entidad actualizada
         return microentrepreneurshipRepository.save(existingMicroentrepreneurship);
@@ -51,7 +51,7 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
                 .orElseThrow(() -> new EntityNotFoundException("Microentrepreneurship not found with id: " + id));
 
         // Oculta el microemprendimiento
-        microentrepreneurship.setActivo(false);
+        microentrepreneurship.setIsActive(false);
 
         // Guarda la entidad actualizada
         microentrepreneurshipRepository.save(microentrepreneurship);
@@ -60,7 +60,7 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     @Override
     public Microentrepreneurship getMicroentrepreneurshipById(Long id) {
         // Verifica si el microemprendimiento existe
-        Microentrepreneurship microentrepreneurship = microentrepreneurshipRepository.findByIdWithImagenes(id)
+        Microentrepreneurship microentrepreneurship = microentrepreneurshipRepository.findByIdWithImages(id)
                 .orElseThrow(() -> new EntityNotFoundException("Microentrepreneurship not found with id: " + id));
 
         // Retorna el microemprendimiento
