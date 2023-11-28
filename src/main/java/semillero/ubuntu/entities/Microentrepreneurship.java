@@ -25,7 +25,6 @@ public class Microentrepreneurship {
 
     @NotBlank(message = "El nombre no puede estar en blanco")
     @Size(min = 3, message = "El nombre debe tener más de 3 caracteres")
-    @NotNull(message = "El nombre no puede ser nulo")
     private String name;
 
     @NotBlank(message = "El país no puede estar en blanco")
@@ -42,7 +41,8 @@ public class Microentrepreneurship {
     private String city;
 
     @ManyToOne
-    @JoinColumn(name = "categoria_id") // Nombre de la columna en la tabla que representa la relación con la categoría
+    @NotNull(message = "La categoría no puede estar en blanco")
+    @JoinColumn(name = "category_id") // Nombre de la columna en la tabla que representa la relación con la categoría
     private Category category; // Categoría del microemprendimiento
 
     @NotBlank(message = "La subcategoría no puede estar en blanco")
@@ -59,10 +59,16 @@ public class Microentrepreneurship {
     @Size(max = 300, message = "La descripción no puede tener más de 300 caracteres")
     private String description;
 
-    // Mas información
+    // Mas información no es obligatoria
     @Size(max = 300, message = "La información adicional no puede tener más de 300 caracteres")
     private String moreInfo;
 
     // Getters, setters y constructor generados automáticamente por Lombok
+
+    // ? PrePersist se ejecuta antes de que se persista es decir se cree  el objeto en la base de datos, es |
+    @PrePersist
+    public void  prePersist() {
+        this.setIsActive(false);
+    }
 
 }
