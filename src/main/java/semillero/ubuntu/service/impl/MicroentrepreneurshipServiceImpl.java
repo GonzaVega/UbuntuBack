@@ -25,7 +25,7 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     public Microentrepreneurship editMicroentrepreneurship(Long id,Microentrepreneurship microentrepreneurship) {
         // Verifica si el microemprendimiento existe
         Microentrepreneurship existingMicroentrepreneurship = microentrepreneurshipRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Microentrepreneurship not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Microemprendimiento no encontrado con ID: " + id));
 
         // Actualiza los datos del microemprendimiento existente con los nuevos datos
         existingMicroentrepreneurship.setName(microentrepreneurship.getName());
@@ -49,7 +49,7 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     public void hideMicroentrepreneurship(Long id) {
         // Verifica si el microemprendimiento existe
         Microentrepreneurship microentrepreneurship = microentrepreneurshipRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Microentrepreneurship not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Microemprendimiento no encontrado con ID: " + id));
 
         // Oculta el microemprendimiento
         microentrepreneurship.setIsActive(false);
@@ -62,7 +62,7 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     public Microentrepreneurship getMicroentrepreneurshipById(Long id) {
         // Verifica si el microemprendimiento existe
         Microentrepreneurship microentrepreneurship = microentrepreneurshipRepository.findByIdWithImages(id)
-                .orElseThrow(() -> new EntityNotFoundException("Microentrepreneurship not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Microemprendimiento no encontrado con ID: " + id));
 
         // Retorna el microemprendimiento
         return microentrepreneurship;
