@@ -22,24 +22,26 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     }
 
     @Override
-    public Microentrepreneurship editMicroentrepreneurship(Long id) {
+    public Microentrepreneurship editMicroentrepreneurship(Long id,Microentrepreneurship microentrepreneurship) {
         // Verifica si el microemprendimiento existe
         Microentrepreneurship existingMicroentrepreneurship = microentrepreneurshipRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Microentrepreneurship not found with id: " + id));
 
-        // Actualiza los campos necesarios
-        existingMicroentrepreneurship.setName(existingMicroentrepreneurship.getName());
-        existingMicroentrepreneurship.setDescription(existingMicroentrepreneurship.getDescription());
-        existingMicroentrepreneurship.setCity(existingMicroentrepreneurship.getCity());
-        existingMicroentrepreneurship.setCategory(existingMicroentrepreneurship.getCategory());
-        existingMicroentrepreneurship.setSubCategory(existingMicroentrepreneurship.getSubCategory());
-        existingMicroentrepreneurship.setImages(existingMicroentrepreneurship.getImages());
-        existingMicroentrepreneurship.setIsActive(existingMicroentrepreneurship.getIsActive());
-        existingMicroentrepreneurship.setMoreInfo(existingMicroentrepreneurship.getMoreInfo());
-
+        // Actualiza los datos del microemprendimiento existente con los nuevos datos
+        existingMicroentrepreneurship.setName(microentrepreneurship.getName());
+        existingMicroentrepreneurship.setCountry(microentrepreneurship.getCountry());
+        existingMicroentrepreneurship.setProvince(microentrepreneurship.getProvince());
+        existingMicroentrepreneurship.setCity(microentrepreneurship.getCity());
+        existingMicroentrepreneurship.setCategory(microentrepreneurship.getCategory());
+        existingMicroentrepreneurship.setSubCategory(microentrepreneurship.getSubCategory());
+        existingMicroentrepreneurship.setImages(microentrepreneurship.getImages());
+        existingMicroentrepreneurship.setIsActive(microentrepreneurship.getIsActive());
+        existingMicroentrepreneurship.setDescription(microentrepreneurship.getDescription());
+        existingMicroentrepreneurship.setMoreInfo(microentrepreneurship.getMoreInfo());
 
         // Guarda la entidad actualizada
         return microentrepreneurshipRepository.save(existingMicroentrepreneurship);
+
     }
 
 
