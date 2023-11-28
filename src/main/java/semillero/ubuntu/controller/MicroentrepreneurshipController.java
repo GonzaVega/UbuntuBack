@@ -71,35 +71,18 @@ public class MicroentrepreneurshipController {
     @PutMapping("/microentrepreneurship/{id}")
     public ResponseEntity<?> editMicroentrepreneurship(@Valid @RequestBody Microentrepreneurship microentrepreneurship,BindingResult result,@PathVariable Long id) {
 
-        System.out.println("errors 1 ");
         Map<String, Object> response = new HashMap<>();
-
-        System.out.println("errors");
-        System.out.println(result.hasErrors());
 
         if (result.hasErrors()) {
 
             List<String> errors = new ArrayList<>();
 
             for (FieldError err : result.getFieldErrors()) {
-                System.out.println("errors");
                 String s = err.getDefaultMessage();
-                System.out.println(s);
                 errors.add(s);
             }
 
             response.put("errors", errors); // Se almacenan los errores en el HashMap
-            System.out.println("errors");
-            System.out.println("errors");
-            System.out.println("errors");
-            System.out.println("errors");
-            System.out.println("errors");
-            System.out.println("errors");
-            System.out.println("errors");
-            System.out.println("errors");
-            System.out.println("errors");
-
-            System.out.println(response);
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST); // Se retorna el HashMap con los errores y el código de error
         }
 
