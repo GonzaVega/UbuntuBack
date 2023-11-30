@@ -23,7 +23,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
@@ -32,14 +32,6 @@ public class AuthController {
     @Autowired
     private TokenUtil tokenUtil;
 
-//    private UserService userService;
-//    private final TokenUtil tokenUtil;
-//
-//    @Autowired
-//    public AuthController(UserService userService, TokenUtil tokenUtil) {
-//        this.userService = userService;
-//        this.tokenUtil = tokenUtil;
-//    }
 
     //controler para manejar la autenticación con google oauth
     @PostMapping("/google")
