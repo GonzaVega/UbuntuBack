@@ -106,7 +106,7 @@ public class MicroentrepreneurshipController {
 
         try {
             microentrepreneurshipService.hideMicroentrepreneurship(id);
-            response.put("message", "Microemprendimiento ocultado con éxito");
+            response.put("message", "Microemprendimiento oculto con éxito");
             return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (EntityNotFoundException e) {
@@ -118,10 +118,16 @@ public class MicroentrepreneurshipController {
         }
     }
 
-    @GetMapping("/all")
+    @GetMapping("/microentrepreneurship/all")
     public ResponseEntity<List<Microentrepreneurship>> getAllMicroentrepreneurships() {
         List<Microentrepreneurship> microentrepreneurships = microentrepreneurshipService.getAllMicroentrepreneurships();
         return new ResponseEntity<>(microentrepreneurships, HttpStatus.OK);
+    }
+
+    @GetMapping("/microentrepreneurship/count")
+    public ResponseEntity<Long> countMicroentrepreneurships() {
+        Long count = microentrepreneurshipService.countMicroentrepreneurships();
+        return new ResponseEntity<>(count, HttpStatus.OK);
     }
 
 }
