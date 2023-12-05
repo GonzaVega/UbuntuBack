@@ -14,4 +14,7 @@ public interface MicroentrepreneurshipService {
 
     List<Microentrepreneurship> getAllMicroentrepreneurships();
 
+    // Cantidad de microemprendimientos
+    Long countMicroentrepreneurships();
+
 }
