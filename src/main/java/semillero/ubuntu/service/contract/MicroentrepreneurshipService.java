@@ -17,4 +17,11 @@ public interface MicroentrepreneurshipService {
     // Cantidad de microemprendimientos
     Long countMicroentrepreneurships();
 
+    // Cantidad de microemprendimientos gestionados
+    Long countMicroentrepreneurshipsActive();
+
+    // Cantidad de microemprendimientos no gestionados
+    Long countMicroentrepreneurshipsNotActive();
+
+
 }
