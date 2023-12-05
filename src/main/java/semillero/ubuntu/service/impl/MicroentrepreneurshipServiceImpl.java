@@ -83,5 +83,19 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         return microentrepreneurshipRepository.count();
     }
 
+    @Override
+    public Long countMicroentrepreneurshipsActive() {
+        // Retorna la cantidad de microemprendimientos gestionados
+        return microentrepreneurshipRepository.countMicroentrepreneurshipsActive();
+    }
+
+    @Override
+    public Long countMicroentrepreneurshipsNotActive() {
+        // Retorna la cantidad de microemprendimientos no gestionados
+        return microentrepreneurshipRepository.countMicroentrepreneurshipsNotActive();
+    }
+
+
+
 }
 
