@@ -130,4 +130,18 @@ public class MicroentrepreneurshipController {
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
 
+    @GetMapping("/microentrepreneurship/count/active")
+    public ResponseEntity<Long> countMicroentrepreneurshipsActive() {
+        Long count = microentrepreneurshipService.countMicroentrepreneurshipsActive();
+        return new ResponseEntity<>(count, HttpStatus.OK);
+    }
+
+    @GetMapping("/microentrepreneurship/count/notactive")
+    public ResponseEntity<Long> countMicroentrepreneurshipsNotActive() {
+        Long count = microentrepreneurshipService.countMicroentrepreneurshipsNotActive();
+        return new ResponseEntity<>(count, HttpStatus.OK);
+    }
+
+
+
 }
