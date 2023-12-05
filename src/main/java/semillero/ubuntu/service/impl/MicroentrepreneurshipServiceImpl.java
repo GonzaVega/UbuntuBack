@@ -77,5 +77,11 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         return microentrepreneurshipRepository.findAll();
     }
 
+    @Override
+    public Long countMicroentrepreneurships() {
+        // Retorna la cantidad de microemprendimientos
+        return microentrepreneurshipRepository.count();
+    }
+
 }
 
