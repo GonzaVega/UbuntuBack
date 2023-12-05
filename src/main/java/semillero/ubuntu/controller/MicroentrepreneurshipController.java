@@ -142,6 +142,12 @@ public class MicroentrepreneurshipController {
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
 
+    @GetMapping("/microentrepreneurship/count/categories")
+    public ResponseEntity< Object[][] > countMicroentrepreneurshipsByCategories() {
+        Object[][] count = microentrepreneurshipService.countMicroentrepreneurshipsByCategories();
+        return new ResponseEntity<>(count, HttpStatus.OK);
+    }
+
 
 
 }
