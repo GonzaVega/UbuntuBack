@@ -95,6 +95,13 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         return microentrepreneurshipRepository.countMicroentrepreneurshipsNotActive();
     }
 
+    @Override
+
+    public  Object[][] countMicroentrepreneurshipsByCategories() {
+        // Retorna la cantidad de microemprendimientos por categorias
+        return microentrepreneurshipRepository.countMicroentrepreneurshipsByCategory();
+    }
+
 
 
 }
