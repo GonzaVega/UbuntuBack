@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import semillero.ubuntu.entities.Microentrepreneurship;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -26,5 +27,9 @@ public interface MicroentrepreneurshipRepository extends JpaRepository<Microentr
     // Obtener  el nombre de las categorias  y  la cantidad de microemprendimientos de todas la categorias
     @Query("SELECT c.name AS name_category, COUNT(m.category.id) AS count FROM Category c LEFT JOIN Microentrepreneurship m ON m.category.id = c.id GROUP BY c.name")
     Object[][] countMicroentrepreneurshipsByCategory();
+
+    // Obtener microemprendimientos por coincidencia de nombre
+    @Query("SELECT m FROM Microentrepreneurship m WHERE m.name LIKE %:name%")
+    List<Microentrepreneurship> findMicroentrepreneurshipsByName(@Param("name") String name);
 
 }
