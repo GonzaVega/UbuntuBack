@@ -96,13 +96,16 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     }
 
     @Override
-
     public  Object[][] countMicroentrepreneurshipsByCategories() {
         // Retorna la cantidad de microemprendimientos por categorias
         return microentrepreneurshipRepository.countMicroentrepreneurshipsByCategory();
     }
 
-
+    @Override
+    public List<Microentrepreneurship> findMicroentrepreneurshipsByName(String name) {
+        // Retorna microemprendimientos por coincidencia de nombre
+        return microentrepreneurshipRepository.findMicroentrepreneurshipsByName(name);
+    }
 
 }
 
