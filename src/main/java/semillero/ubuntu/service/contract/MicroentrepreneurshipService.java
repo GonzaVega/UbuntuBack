@@ -26,6 +26,8 @@ public interface MicroentrepreneurshipService {
     // Cantidad de microemprendimientos por categorias
     Object[][] countMicroentrepreneurshipsByCategories();
 
+    // Obtener microemprendimientos por coincidencia de nombre
+    List<Microentrepreneurship> findMicroentrepreneurshipsByName(String name);
 
 
 }
