@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @PutMapping("{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable String userId, @RequestBody User updatedUser) {
+    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody User updatedUser) {
         User updateUser = userService.updateUser(updatedUser, userId);
 
         if (updateUser != null) {
@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @PutMapping("/disable/{userId}")
-    public ResponseEntity<User> disableUser(@PathVariable String userId) {
+    public ResponseEntity<User> disableUser(@PathVariable Long userId) {
         User disableUser = userService.disableUser(userId);
 
         if (disableUser != null) {

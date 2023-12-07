@@ -8,8 +8,6 @@ import semillero.ubuntu.enums.Role;
 @Entity
 @Data
 @Builder
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_control", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
@@ -17,28 +15,28 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long userId;
+    private Long userId;
 
     @Basic
     @Size(min = 2, max = 60)
     @Column(nullable = false, length = 60)
-    String name;
+    private String name;
 
     @Size(min = 2, max = 60)
     @Column(nullable = false, length = 60)
-    String lastName;
+    private String lastName;
 
     @Column(nullable = false)
-    String email;
+    private String email;
 
-    Boolean disabled;
+    private Boolean disabled;
 
     @Enumerated(EnumType.STRING)
-    Role role;
+    private Role role;
 
     @Size(min = 2, max = 30)
     @Column(nullable = false, length = 30)
-    String phone;
+    private String phone;
 
     @PrePersist
     void prePersistDisabled() {

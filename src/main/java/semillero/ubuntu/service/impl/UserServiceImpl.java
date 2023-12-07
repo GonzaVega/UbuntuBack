@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(User user, String userId) {
+    public User updateUser(User user, Long userId) {
         logger.info("Update Employee");
         User updateUser = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("The User with ID: " + userId + " was not found"));
 
@@ -43,12 +43,15 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User disableUser(String userId) {
+    public User disableUser(Long userId) {
         logger.info("Disable User");
         User disableUser = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("The User with email: " + userId + " was not found"));
 
         if (disableUser.getDisabled() == true) {
             disableUser.setDisabled(false);
+            userRepository.save(disableUser);
+        }else{
+            disableUser.setDisabled(true);
             userRepository.save(disableUser);
         }
 
