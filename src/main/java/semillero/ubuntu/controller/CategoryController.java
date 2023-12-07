@@ -2,6 +2,7 @@ package semillero.ubuntu.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import semillero.ubuntu.dto.CategoryDto;
 import semillero.ubuntu.entities.Category;
 import semillero.ubuntu.service.contract.CategoryService;
 
@@ -28,22 +29,20 @@ public class CategoryController {
 
 
         try {
-              newCategory = categoryService.createCategory(category);
-             return new ResponseEntity<>(newCategory, HttpStatus.CREATED);
+            newCategory = categoryService.createCategory(category);
+            return new ResponseEntity<>(newCategory, HttpStatus.CREATED);
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-
     }
 
-
     @GetMapping("/categories")
-    public ResponseEntity<List<Category>> getAllCategories() {
+    public ResponseEntity<List<CategoryDto>> getAllCategories() {
 
-        List<Category> categories = categoryService.getAllCategories();
+        List<CategoryDto> categories = categoryService.getAllCategories();
 
         // Si no hay categorías registradas, lanza una excepción
         if (categories.isEmpty()) {
