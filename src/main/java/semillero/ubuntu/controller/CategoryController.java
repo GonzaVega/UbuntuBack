@@ -44,9 +44,7 @@ public class CategoryController {
 
         List<CategoryDto> categories = categoryService.getAllCategories();
 
-        for (CategoryDto category : categories) {
-            System.out.println(category.getName());
-        }
+
 
         // Si no hay categorías registradas, lanza una excepción
         if (categories.isEmpty()) {
