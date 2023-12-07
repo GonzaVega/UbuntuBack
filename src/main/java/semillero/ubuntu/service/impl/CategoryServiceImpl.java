@@ -43,12 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         List<Category> categoryEntities = categoryRepository.findAll();
 
-        List<CategoryDto> categories = new ArrayList<>();
-
-        for (Category category : categoryEntities) {
-            categories.add(categoryMapper.categoryEntityToDto(category));
-        }
-        return categories;
+        return categoryMapper.categoriesEntityToDto(categoryEntities);
     }
 
 
