@@ -1,0 +1,41 @@
+package semillero.ubuntu.entities;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
+
+
+import java.time.LocalDateTime;
+import java.util.Date;
+
+@Entity
+@Data
+public class Publication {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column(nullable = false)
+    String title;
+
+    @NotBlank(message = "La descripción no puede estar en blanco")
+    @Size(max = 2500, message = "La descripción no puede tener mas de 2500 caracteres")
+    String description;
+
+    @Column(nullable = false)
+    boolean deleted;
+
+    @Column(nullable = false)
+    Date creationDate;
+
+
+    int views;
+
+
+}
