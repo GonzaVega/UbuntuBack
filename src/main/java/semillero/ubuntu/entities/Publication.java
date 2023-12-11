@@ -28,10 +28,10 @@ public class Publication {
     @Size(max = 2500, message = "La descripción no puede tener mas de 2500 caracteres")
     String description;
 
-    @Column(nullable = false)
+    //@Column(nullable = false)
     boolean deleted;
 
-    @Column(nullable = false)
+    //@Column(nullable = false)
     Date creationDate;
 
 
