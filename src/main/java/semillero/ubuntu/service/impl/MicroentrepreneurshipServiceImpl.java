@@ -38,7 +38,6 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         existingMicroentrepreneurship.setCategory(microentrepreneurship.getCategory());
         existingMicroentrepreneurship.setSubCategory(microentrepreneurship.getSubCategory());
         existingMicroentrepreneurship.setImages(microentrepreneurship.getImages());
-        existingMicroentrepreneurship.setIsActive(microentrepreneurship.getIsActive());
         existingMicroentrepreneurship.setDescription(microentrepreneurship.getDescription());
         existingMicroentrepreneurship.setMoreInfo(microentrepreneurship.getMoreInfo());
 
@@ -62,10 +61,23 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     }
 
     @Override
+    public void manageMicroentrepreneurship(Long id) {
+        // Verifica si el microemprendimiento existe
+        Microentrepreneurship microentrepreneurship = microentrepreneurshipRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Microemprendimiento no encontrado"));
+
+        // Gestiona el microemprendimiento
+        microentrepreneurship.setIsManaged(true);
+
+        // Guarda la entidad actualizada
+        microentrepreneurshipRepository.save(microentrepreneurship);
+    }
+
+    @Override
     public Microentrepreneurship getMicroentrepreneurshipById(Long id) {
         // Verifica si el microemprendimiento existe
         Microentrepreneurship microentrepreneurship = microentrepreneurshipRepository.findByIdWithImages(id)
-                .orElseThrow(() -> new EntityNotFoundException("Microemprendimiento no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("El microemprendimiento no existe"));
 
         // Retorna el microemprendimiento
         return microentrepreneurship;
@@ -74,7 +86,7 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     @Override
     public List<Microentrepreneurship> getAllMicroentrepreneurships() {
         // Retorna todos los microemprendimientos
-        return microentrepreneurshipRepository.findAll();
+        return microentrepreneurshipRepository.findAllMicroentrepreneurshipsActive();
     }
 
     @Override

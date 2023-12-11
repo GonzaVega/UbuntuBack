@@ -44,8 +44,6 @@ public class CategoryController {
 
         List<CategoryDto> categories = categoryService.getAllCategories();
 
-
-
         // Si no hay categorías registradas, lanza una excepción
         if (categories.isEmpty()) {
             return ResponseEntity.notFound().build();

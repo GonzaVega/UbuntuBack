@@ -1,6 +1,7 @@
 package semillero.ubuntu.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
 import semillero.ubuntu.dto.CategoryDto;
 import semillero.ubuntu.entities.Category;
