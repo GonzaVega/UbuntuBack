@@ -1,5 +1,6 @@
 package semillero.ubuntu.service.contract;
 
+import semillero.ubuntu.dto.CategoryDto;
 import semillero.ubuntu.entities.Category;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public interface CategoryService {
      * @return Una lista de objetos Category que representan todas las categorías disponibles.
      *
      */
-    List<Category> getAllCategories();
+    List<CategoryDto> getAllCategories();
 
     /*
      *

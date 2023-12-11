@@ -14,4 +14,20 @@ public interface MicroentrepreneurshipService {
 
     List<Microentrepreneurship> getAllMicroentrepreneurships();
 
+    // Cantidad de microemprendimientos
+    Long countMicroentrepreneurships();
+
+    // Cantidad de microemprendimientos gestionados
+    Long countMicroentrepreneurshipsActive();
+
+    // Cantidad de microemprendimientos no gestionados
+    Long countMicroentrepreneurshipsNotActive();
+
+    // Cantidad de microemprendimientos por categorias
+    Object[][] countMicroentrepreneurshipsByCategories();
+
+    // Obtener microemprendimientos por coincidencia de nombre
+    List<Microentrepreneurship> findMicroentrepreneurshipsByName(String name);
+
+
 }

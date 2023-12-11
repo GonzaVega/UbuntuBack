@@ -77,5 +77,35 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         return microentrepreneurshipRepository.findAll();
     }
 
+    @Override
+    public Long countMicroentrepreneurships() {
+        // Retorna la cantidad de microemprendimientos
+        return microentrepreneurshipRepository.count();
+    }
+
+    @Override
+    public Long countMicroentrepreneurshipsActive() {
+        // Retorna la cantidad de microemprendimientos gestionados
+        return microentrepreneurshipRepository.countMicroentrepreneurshipsActive();
+    }
+
+    @Override
+    public Long countMicroentrepreneurshipsNotActive() {
+        // Retorna la cantidad de microemprendimientos no gestionados
+        return microentrepreneurshipRepository.countMicroentrepreneurshipsNotActive();
+    }
+
+    @Override
+    public  Object[][] countMicroentrepreneurshipsByCategories() {
+        // Retorna la cantidad de microemprendimientos por categorias
+        return microentrepreneurshipRepository.countMicroentrepreneurshipsByCategory();
+    }
+
+    @Override
+    public List<Microentrepreneurship> findMicroentrepreneurshipsByName(String name) {
+        // Retorna microemprendimientos por coincidencia de nombre
+        return microentrepreneurshipRepository.findMicroentrepreneurshipsByName(name);
+    }
+
 }
 
