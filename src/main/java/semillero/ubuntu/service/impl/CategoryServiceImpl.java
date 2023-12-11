@@ -47,9 +47,6 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.categoryListToCategoryDtoList(categoryEntities);
     }
 
-
-
-
     @Override
     public Category getCategoryByName(String name) {
 
