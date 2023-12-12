@@ -1,6 +1,5 @@
 package semillero.ubuntu.controller;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,22 +7,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import semillero.ubuntu.entities.Category;
 import semillero.ubuntu.entities.Microentrepreneurship;
+import semillero.ubuntu.service.contract.CategoryService;
 import semillero.ubuntu.service.contract.MicroentrepreneurshipService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static semillero.ubuntu.utils.FileValidator.validateFiles;
+
 
 @RestController
 @RequestMapping("/api/v1/microentrepreneurship/")
 public class MicroentrepreneurshipController {
     private final MicroentrepreneurshipService microentrepreneurshipService;
+    private final CategoryService categoryService;
 
     @Autowired
-    public MicroentrepreneurshipController(MicroentrepreneurshipService microentrepreneurshipService) {
+    public MicroentrepreneurshipController(MicroentrepreneurshipService microentrepreneurshipService, CategoryService categoryService) {
         this.microentrepreneurshipService = microentrepreneurshipService;
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/{id}")
@@ -34,7 +38,7 @@ public class MicroentrepreneurshipController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> createMicroentrepreneurship(@Valid @RequestBody Microentrepreneurship microentrepreneurship, BindingResult result) {
+    public ResponseEntity<?> createMicroentrepreneurship(@Valid @RequestBody Microentrepreneurship microentrepreneurship, @RequestParam("files") List<MultipartFile> files , BindingResult result) {
         // @Valid se utiliza para hacer las validaciones definidas en el modelo, si no se utiliza, no se ejecuta la validación
         // BindingResult result se utiliza para capturar los errores de validación
 
@@ -59,6 +63,7 @@ public class MicroentrepreneurshipController {
 
         try {
             Microentrepreneurship createdMicroentrepreneurship = microentrepreneurshipService.createMicroentrepreneurship(microentrepreneurship);
+            //List<String> imageUrls = microentrepreneurshipService.uploadImages(files, microentrepreneurship);
             response.put("message", "Microemprendimiento creado con éxito");
             response.put("microentrepreneurship", createdMicroentrepreneurship);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -69,6 +74,75 @@ public class MicroentrepreneurshipController {
         }
 
     }
+
+    @PostMapping("/saveImg")
+    public ResponseEntity<?> createMicroentrepreneurshipImg(
+        @RequestParam("name") String name, @RequestParam("country") String country,
+        @RequestParam("province") String province,@RequestParam("city") String city,
+        @RequestParam("category") Long categoryId,@RequestParam("subcategory") String subCategory,
+        @RequestParam("description") String description,@RequestParam("moreInformation") String moreInformation,
+        @RequestParam("files")List<MultipartFile> files) throws Exception {
+
+        Map<String, Object> response = new HashMap<>(); // Se crea un HashMap para almacenar la respuesta
+
+        // Validar los archivos de imagen y devuelve un ResponseEntity de acuerdo al resultado de la validación
+        ResponseEntity<?> fileValidationResponse = validateFiles(files);
+
+        // Si la validación falla, se retorna el ResponseEntity con el error
+        // getStatusCode() obtiene el estado HTTP de la respuesta,
+        // is2xxSuccessful() verifica si el estado es 2xx (200, 201, 202, etc)m es decir, si la respuesta es exitosa
+        if (!fileValidationResponse.getStatusCode().is2xxSuccessful()) {
+            return fileValidationResponse;
+        }
+
+        // Se crea el microemprendimiento Entity
+        Microentrepreneurship microentrepreneurship = new Microentrepreneurship();
+        microentrepreneurship.setName(name);
+        microentrepreneurship.setCountry(country);
+        microentrepreneurship.setProvince(province);
+        microentrepreneurship.setCity(city);
+        microentrepreneurship.setSubCategory(subCategory);
+
+        // Obtener la entidad Category
+        Category category = categoryService.findCategoryById(categoryId);
+
+        microentrepreneurship.setCategory(category);
+        microentrepreneurship.setSubCategory(subCategory);
+        microentrepreneurship.setDescription(description);
+        microentrepreneurship.setMoreInfo(moreInformation);
+
+
+        // Crear el microemprendimiento en la base de datos
+        Microentrepreneurship createdMicroentrepreneurship = microentrepreneurshipService.createMicroentrepreneurship(microentrepreneurship);
+
+        // Subir las imagenes a cloudinary y obtener las urls
+        List<String> imageUrls = microentrepreneurshipService.UrlImg(files);
+
+        createdMicroentrepreneurship.setImages(imageUrls);
+
+        // Guardar el microemprendimiento con las urls de las imagenes
+        microentrepreneurshipService.editMicroentrepreneurship(createdMicroentrepreneurship.getId(), createdMicroentrepreneurship);
+
+        response.put("message", "Microemprendimiento creado con éxito");
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+    }
+
+
+    @PostMapping("/saveprueba")
+    public ResponseEntity<?> createMicroentrepreneurshipPrueba( @RequestBody Prueba prueba, @RequestParam("files") List<MultipartFile> files ) {
+        // @Valid se utiliza para hacer las validaciones definidas en el modelo, si no se utiliza, no se ejecuta la validación
+        // BindingResult result se utiliza para capturar los errores de validación
+
+        Map<String, Object> response = new HashMap<>(); // Se crea un HashMap para almacenar la respuesta
+
+        return ResponseEntity.ok(prueba);
+
+
+
+    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editMicroentrepreneurship(@Valid @RequestBody Microentrepreneurship microentrepreneurship,BindingResult result,@PathVariable Long id) {
