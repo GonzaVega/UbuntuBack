@@ -55,7 +55,9 @@ public class Microentrepreneurship {
     @Size(max = 3, message = "La lista de imágenes no puede tener más de 3 elementos")
     private List<String> images;
 
-    private Boolean isActive = false; // Inicia con valor false por defecto
+    private Boolean isActive ;  // Está activo
+
+    private Boolean isManaged; // Está gestionado
 
     @NotBlank(message = "La descripción no puede estar en blanco")
     @Size(max = 300, message = "La descripción no puede tener más de 300 caracteres")
@@ -70,7 +72,8 @@ public class Microentrepreneurship {
     // ? PrePersist se ejecuta antes de que se persista es decir se cree  el objeto en la base de datos, es |
     @PrePersist
     public void  prePersist() {
-        this.setIsActive(false);
+        this.setIsActive(true);
+        this.setIsManaged(false);
     }
 
 }
