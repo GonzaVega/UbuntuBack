@@ -1,5 +1,6 @@
 package semillero.ubuntu.service.contract;
 
+import org.springframework.web.multipart.MultipartFile;
 import semillero.ubuntu.entities.Microentrepreneurship;
 
 import java.util.List;
@@ -31,6 +32,12 @@ public interface MicroentrepreneurshipService {
 
     // Obtener microemprendimientos por coincidencia de nombre
     List<Microentrepreneurship> findMicroentrepreneurshipsByName(String name);
+
+    // Subir las imagenes de los microemprendimientos a cloudinary
+    //void uploadImagesMicroentrepreneurship(Long id, List<String> images);
+    List<String> UrlImg(List<MultipartFile> files);
+
+    String uploadImage(MultipartFile file);
 
 
 }
