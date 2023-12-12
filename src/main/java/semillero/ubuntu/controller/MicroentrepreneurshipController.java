@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1/microentrepreneurship/")
 public class MicroentrepreneurshipController {
     private final MicroentrepreneurshipService microentrepreneurshipService;
 
@@ -26,13 +26,14 @@ public class MicroentrepreneurshipController {
         this.microentrepreneurshipService = microentrepreneurshipService;
     }
 
-    @GetMapping("/microentrepreneurship/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Microentrepreneurship> getMicroentrepreneurshipById(@PathVariable Long id) {
+        // No es necesario usar un try cath porque la excepción se está manejando en la clase GlobalExceptionHandler
         Microentrepreneurship microentrepreneurship = microentrepreneurshipService.getMicroentrepreneurshipById(id);
         return new ResponseEntity<>(microentrepreneurship, HttpStatus.OK);
     }
 
-    @PostMapping("/microentrepreneurship")
+    @PostMapping("/save")
     public ResponseEntity<?> createMicroentrepreneurship(@Valid @RequestBody Microentrepreneurship microentrepreneurship, BindingResult result) {
         // @Valid se utiliza para hacer las validaciones definidas en el modelo, si no se utiliza, no se ejecuta la validación
         // BindingResult result se utiliza para capturar los errores de validación
@@ -69,7 +70,7 @@ public class MicroentrepreneurshipController {
 
     }
 
-    @PutMapping("/microentrepreneurship/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> editMicroentrepreneurship(@Valid @RequestBody Microentrepreneurship microentrepreneurship,BindingResult result,@PathVariable Long id) {
 
         Map<String, Object> response = new HashMap<>();
@@ -101,54 +102,53 @@ public class MicroentrepreneurshipController {
     }
 
     @PatchMapping("/{id}/hide")
-    public ResponseEntity<?> hideMicroentrepreneurship(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> hideMicroentrepreneurship(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
+        microentrepreneurshipService.hideMicroentrepreneurship(id);
+        response.put("message", "Microemprendimiento oculto con éxito");
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
-        try {
-            microentrepreneurshipService.hideMicroentrepreneurship(id);
-            response.put("message", "Microemprendimiento oculto con éxito");
-            return new ResponseEntity<>(response, HttpStatus.OK);
-
-        } catch (EntityNotFoundException e) {
-            response.put("error", e.getMessage());
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            response.put("error", e.getMessage());
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
-    @GetMapping("/microentrepreneurship/all")
+    @PatchMapping("/{id}/manage")
+    public ResponseEntity<Map<String, Object>> manageMicroentrepreneurship(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        microentrepreneurshipService.manageMicroentrepreneurship(id);
+        response.put("message", "Microemprendimiento gestionado con éxito");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+    @GetMapping("/all")
     public ResponseEntity<List<Microentrepreneurship>> getAllMicroentrepreneurships() {
         List<Microentrepreneurship> microentrepreneurships = microentrepreneurshipService.getAllMicroentrepreneurships();
         return new ResponseEntity<>(microentrepreneurships, HttpStatus.OK);
     }
 
-    @GetMapping("/microentrepreneurship/count")
+    @GetMapping("/count")
     public ResponseEntity<Long> countMicroentrepreneurships() {
         Long count = microentrepreneurshipService.countMicroentrepreneurships();
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
 
-    @GetMapping("/microentrepreneurship/count/active")
+    @GetMapping("/count/active")
     public ResponseEntity<Long> countMicroentrepreneurshipsActive() {
         Long count = microentrepreneurshipService.countMicroentrepreneurshipsActive();
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
 
-    @GetMapping("/microentrepreneurship/count/notactive")
+    @GetMapping("/count/notactive")
     public ResponseEntity<Long> countMicroentrepreneurshipsNotActive() {
         Long count = microentrepreneurshipService.countMicroentrepreneurshipsNotActive();
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
 
-    @GetMapping("/microentrepreneurship/count/categories")
+    @GetMapping("count/categories")
     public ResponseEntity< Object[][] > countMicroentrepreneurshipsByCategories() {
         Object[][] count = microentrepreneurshipService.countMicroentrepreneurshipsByCategories();
         return new ResponseEntity<>(count, HttpStatus.OK);
     }
 
-    @GetMapping("/microentrepreneurship/find")
+    @GetMapping("/find")
     public ResponseEntity< Map<String,Object> > findMicroentrepreneurshipsByName(@RequestParam(name = "name") String name) {
 
         // @RequestParam(name = "name")  se utiliza para obtener el valor del parámetro name de la url, parametro de consulta
