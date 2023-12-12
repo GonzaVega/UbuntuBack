@@ -1,18 +1,27 @@
 package semillero.ubuntu.service.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import semillero.ubuntu.entities.Microentrepreneurship;
+import semillero.ubuntu.exception.CloudinaryException;
 import semillero.ubuntu.repository.MicroentrepreneurshipRepository;
 import semillero.ubuntu.service.contract.MicroentrepreneurshipService;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipService {
 
     // Inyección de dependencias a través del constructor
     private final MicroentrepreneurshipRepository microentrepreneurshipRepository;
+
 
     public MicroentrepreneurshipServiceImpl(MicroentrepreneurshipRepository microentrepreneurshipRepository) {
         this.microentrepreneurshipRepository = microentrepreneurshipRepository;
@@ -118,6 +127,38 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         // Retorna microemprendimientos por coincidencia de nombre
         return microentrepreneurshipRepository.findMicroentrepreneurshipsByName(name);
     }
+
+    @Override
+    public List<String> UrlImg(List<MultipartFile> files ) {
+        List<String> imageUrls = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            String imageUrl = uploadImage(file);
+            imageUrls.add(imageUrl);
+        }
+
+        return imageUrls;
+    }
+
+    // Este metodo se encarga de subir la imagen a  cloudinary y retorna la url de la imagen
+    @Override
+    public String uploadImage(MultipartFile file) {
+        // datos de la cuenta de cloudinary
+        Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", "dkzspm2fj",
+                "api_key", "229982374928582",
+                "api_secret", "ZM54qomggmRWESmK2QQgui7_WPo"));
+
+        try {
+            Map<?, ?> uploadResult= cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            String imageUrl = (String) uploadResult.get("secure_url");
+            return imageUrl;
+        } catch (Exception e) {
+            throw new CloudinaryException("Error al subir la imagen");
+        }
+
+    }
+
 
 }
 
