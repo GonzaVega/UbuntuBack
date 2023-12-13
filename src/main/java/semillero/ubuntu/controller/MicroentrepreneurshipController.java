@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -41,53 +42,17 @@ public class MicroentrepreneurshipController {
         return new ResponseEntity<>(microentrepreneurship, HttpStatus.OK);
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<?> createMicroentrepreneurship(@Valid @RequestBody Microentrepreneurship microentrepreneurship, @RequestParam("files") List<MultipartFile> files , BindingResult result) {
-        // @Valid se utiliza para hacer las validaciones definidas en el modelo, si no se utiliza, no se ejecuta la validación
-        // BindingResult result se utiliza para capturar los errores de validación
-
-        Map<String, Object> response = new HashMap<>(); // Se crea un HashMap para almacenar la respuesta
-
-        if (result.hasErrors()) { // Si existen errores de validación
-
-            // Se convierten a una lista
-            List<String> errors = new ArrayList<>();
-
-            // Se obtiene cada error y se almacena en la lista
-            for (FieldError err : result.getFieldErrors()) {
-                // Se mapean los errores para que solo se muestre el mensaje de error y  no mas información
-                //String s = "El campo '" + err.getField() + "' " + err.getDefaultMessage(); // Una opcion
-                String s = err.getDefaultMessage(); // Otra opcion
-                errors.add(s);
-            }
-
-            response.put("errors", errors); // Se almacenan los errores en el HashMap
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST); // Se retorna el HashMap con los errores y el código de error
-        }
-
-        try {
-            Microentrepreneurship createdMicroentrepreneurship = microentrepreneurshipService.createMicroentrepreneurship(microentrepreneurship);
-            //List<String> imageUrls = microentrepreneurshipService.uploadImages(files, microentrepreneurship);
-            response.put("message", "Microemprendimiento creado con éxito");
-            response.put("microentrepreneurship", createdMicroentrepreneurship);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-
-        } catch (Exception e) {
-            response.put("error", e.getMessage());
-            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-    }
 
     /*
-     * estás teniendo problemas al intentar enviar un objeto.
+     * Se está teniendo problemas al intentar enviar un objeto.
      * Esto es porque form-data se utiliza principalmente para enviar datos no anidados y archivos.
      * Si intentas enviar un objeto complejo o anidado, puede dar lugar a errores o comportamientos inesperados.
+     * @RequestBody Microentrepreneurship microentrepreneurship
      *
-     *  ten en cuenta que @RequestBody no funciona con multipart/form-data
+     * ten en cuenta que @RequestBody no funciona con multipart/form-data
      *
      * Una solución común es enviar los datos del objeto Microentrepreneurship como una cadena JSON en un parámetro @RequestParam,
-     *  y luego convertir esta cadena JSON de nuevo a un objeto
+     * y luego convertir esta cadena JSON de nuevo a un objeto
      * */
 
     /*
@@ -99,7 +64,7 @@ public class MicroentrepreneurshipController {
         @RequestParam("files")List<MultipartFile> files) throws Exception
     * */
 
-    @PostMapping("/saveImg")
+    @PostMapping("/save")
     public ResponseEntity<?> createMicroentrepreneurshipImg(@RequestParam("microentrepreneurshipJson") String microentrepreneurshipJson, @RequestParam("files") List<MultipartFile> files) throws Exception {
 
         Map<String, Object> response = new HashMap<>(); // Se crea un HashMap para almacenar la respuesta
@@ -114,13 +79,10 @@ public class MicroentrepreneurshipController {
             return fileValidationResponse;
         }
 
-
         // Convertir la cadena JSON de nuevo a un objeto Microentrepreneurship
         // ObjectMapper se utiliza para convertir entre objetos Java y representaciones JSON
         ObjectMapper objectMapper = new ObjectMapper(); // Se crea un objeto ObjectMapper
         Microentrepreneurship microentrepreneurship = objectMapper.readValue(microentrepreneurshipJson, Microentrepreneurship.class); // Se convierte la cadena JSON a un objeto Microentrepreneurship
-
-        System.out.println(microentrepreneurship);
 
         // Crear el microemprendimiento en la base de datos
         Microentrepreneurship createdMicroentrepreneurship = microentrepreneurshipService.createMicroentrepreneurship(microentrepreneurship);
@@ -148,21 +110,6 @@ public class MicroentrepreneurshipController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
 
     }
-
-
-    @PostMapping("/saveprueba")
-    public ResponseEntity<?> createMicroentrepreneurshipPrueba( @RequestParam("microentrepreneurshipJson")String prueba, @RequestParam("files") List<MultipartFile> files ) {
-        // @Valid se utiliza para hacer las validaciones definidas en el modelo, si no se utiliza, no se ejecuta la validación
-        // BindingResult result se utiliza para capturar los errores de validación
-
-        Map<String, Object> response = new HashMap<>(); // Se crea un HashMap para almacenar la respuesta
-
-        return ResponseEntity.ok(prueba);
-
-
-
-    }
-
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editMicroentrepreneurship(@PathVariable Long id,  @RequestParam("microentrepreneurshipJson") String microentrepreneurshipJson, @RequestParam("files") List<MultipartFile> files) throws JsonProcessingException {
@@ -258,11 +205,16 @@ public class MicroentrepreneurshipController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+
+    @Transactional // Se utiliza para que se ejecute la consulta en una transacción,Esto asegurará que la sesión de Hibernate permanezca abierta hasta que se haya completado la operación.
     @GetMapping("/all")
     public ResponseEntity<List<Microentrepreneurship>> getAllMicroentrepreneurships() {
         List<Microentrepreneurship> microentrepreneurships = microentrepreneurshipService.getAllMicroentrepreneurships();
+        // Accede a las imágenes de cada microemprendimiento para inicializar la colección de imágenes
+        microentrepreneurships.forEach(m -> m.getImages().size()); // Inicializa la colección de imágenes
         return new ResponseEntity<>(microentrepreneurships, HttpStatus.OK);
     }
+
 
     @GetMapping("/count")
     public ResponseEntity<Long> countMicroentrepreneurships() {
