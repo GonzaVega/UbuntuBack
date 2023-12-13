@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/publicaciones")
+@RequestMapping("/api/v1/publication")
 public class PublicationController {
     @Autowired
     private PublicationService publicationService;
