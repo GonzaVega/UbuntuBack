@@ -15,18 +15,13 @@ public class PublicarionImpl implements PublicationService {
     private PublicationRepository publicationRepository;
 
     @Override
-    public Publication createPublication(Publication publication, User user){
+    public Publication createPublication(Publication publication, User User){
         publication.setCreationDate(new Date());
         return publicationRepository.save(publication);
     }
     @Override
     public List<Publication> getAllPublication(){
         return publicationRepository.findAll();
-    }
-
-    @Override
-    public Publication getPublicationForId() {
-        return null;
     }
 
     @Override

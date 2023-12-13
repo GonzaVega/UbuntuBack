@@ -21,7 +21,7 @@ public class Publication {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
+    @NotBlank(message = "El titulo no debe estar en blanco")
     String title;
 
     @NotBlank(message = "La descripción no puede estar en blanco")

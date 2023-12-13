@@ -1,5 +1,7 @@
 package semillero.ubuntu.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -49,13 +51,17 @@ public class Microentrepreneurship {
     @Size(max = 255, message = "La subcategoría no puede tener más de 255 caracteres")
     private String subCategory;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    //@ElementCollection(fetch = FetchType.EAGER)
     // ElementCollection Indica que la lista es una colección de elementos,facilita el manejo de colecciones de tipos básicos o en JPA sin necesidad de crear una entidad separada para la colección.
     // FetchType.EAGER indica que la lista se cargará de forma inmediata cuando se cargue el microemprendimiento, es decir, cuando se haga una consulta a la base de datos, esto es para que se carguen las imágenes
-    @Size(max = 3, message = "La lista de imágenes no puede tener más de 3 elementos")
-    private List<String> images;
+    @Size(min = 1, max = 3, message = "Debe haber entre 1 y 3  imágenes")
+    @OneToMany(mappedBy = "microentrepreneurship", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // Indica que se debe serializar la lista de imágenes
+    private List<Image> images;
 
-    private Boolean isActive = false; // Inicia con valor false por defecto
+    private Boolean isActive ;  // Está activo
+
+    private Boolean isManaged; // Está gestionado
 
     @NotBlank(message = "La descripción no puede estar en blanco")
     @Size(max = 300, message = "La descripción no puede tener más de 300 caracteres")
@@ -70,7 +76,8 @@ public class Microentrepreneurship {
     // ? PrePersist se ejecuta antes de que se persista es decir se cree  el objeto en la base de datos, es |
     @PrePersist
     public void  prePersist() {
-        this.setIsActive(false);
+        this.setIsActive(true);
+        this.setIsManaged(false);
     }
 
 }

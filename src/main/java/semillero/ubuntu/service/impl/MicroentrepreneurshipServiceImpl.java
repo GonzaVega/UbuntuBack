@@ -1,21 +1,30 @@
 package semillero.ubuntu.service.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import semillero.ubuntu.entities.Image;
 import semillero.ubuntu.entities.Microentrepreneurship;
+import semillero.ubuntu.exception.CloudinaryException;
+import semillero.ubuntu.repository.ImageRepository;
 import semillero.ubuntu.repository.MicroentrepreneurshipRepository;
 import semillero.ubuntu.service.contract.MicroentrepreneurshipService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipService {
 
     // Inyección de dependencias a través del constructor
     private final MicroentrepreneurshipRepository microentrepreneurshipRepository;
-
-    public MicroentrepreneurshipServiceImpl(MicroentrepreneurshipRepository microentrepreneurshipRepository) {
+    private final ImageRepository imageRepository;
+    public MicroentrepreneurshipServiceImpl(MicroentrepreneurshipRepository microentrepreneurshipRepository, ImageRepository imageRepository) {
         this.microentrepreneurshipRepository = microentrepreneurshipRepository;
+        this.imageRepository = imageRepository;
     }
 
     @Override
@@ -38,9 +47,9 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         existingMicroentrepreneurship.setCategory(microentrepreneurship.getCategory());
         existingMicroentrepreneurship.setSubCategory(microentrepreneurship.getSubCategory());
         existingMicroentrepreneurship.setImages(microentrepreneurship.getImages());
-        existingMicroentrepreneurship.setIsActive(microentrepreneurship.getIsActive());
         existingMicroentrepreneurship.setDescription(microentrepreneurship.getDescription());
         existingMicroentrepreneurship.setMoreInfo(microentrepreneurship.getMoreInfo());
+        existingMicroentrepreneurship.setImages(microentrepreneurship.getImages());
 
         // Guarda la entidad actualizada
         return microentrepreneurshipRepository.save(existingMicroentrepreneurship);
@@ -62,10 +71,23 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     }
 
     @Override
+    public void manageMicroentrepreneurship(Long id) {
+        // Verifica si el microemprendimiento existe
+        Microentrepreneurship microentrepreneurship = microentrepreneurshipRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Microemprendimiento no encontrado"));
+
+        // Gestiona el microemprendimiento
+        microentrepreneurship.setIsManaged(true);
+
+        // Guarda la entidad actualizada
+        microentrepreneurshipRepository.save(microentrepreneurship);
+    }
+
+    @Override
     public Microentrepreneurship getMicroentrepreneurshipById(Long id) {
         // Verifica si el microemprendimiento existe
         Microentrepreneurship microentrepreneurship = microentrepreneurshipRepository.findByIdWithImages(id)
-                .orElseThrow(() -> new EntityNotFoundException("Microemprendimiento no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("El microemprendimiento no existe"));
 
         // Retorna el microemprendimiento
         return microentrepreneurship;
@@ -74,7 +96,7 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     @Override
     public List<Microentrepreneurship> getAllMicroentrepreneurships() {
         // Retorna todos los microemprendimientos
-        return microentrepreneurshipRepository.findAll();
+        return microentrepreneurshipRepository.findAllMicroentrepreneurshipsActive();
     }
 
     @Override
@@ -106,6 +128,69 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         // Retorna microemprendimientos por coincidencia de nombre
         return microentrepreneurshipRepository.findMicroentrepreneurshipsByName(name);
     }
+
+    @Override
+    public List<String> UrlImg(List<MultipartFile> files ) {
+        List<String> imageUrls = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            String imageUrl = uploadImage(file);
+            imageUrls.add(imageUrl);
+        }
+
+        return imageUrls;
+    }
+
+    // Este metodo se encarga de subir la imagen a  cloudinary y retorna la url de la imagen
+    @Override
+    public String uploadImage(MultipartFile file) {
+
+        // datos de la cuenta de cloudinary
+        Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", "dkzspm2fj",
+                "api_key", "229982374928582",
+                "api_secret", "ZM54qomggmRWESmK2QQgui7_WPo"));
+
+        try {
+            Map<?, ?> uploadResult= cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            String imageUrl = (String) uploadResult.get("secure_url");
+            return imageUrl;
+        } catch (Exception e) {
+            throw new CloudinaryException("Error al subir la imagen");
+        }
+
+    }
+
+    @Override
+    public boolean deleteImageFromCloudinary(Image image) {
+        try {
+
+            // datos de la cuenta de cloudinary
+            Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
+                    "cloud_name", "dkzspm2fj",
+                    "api_key", "229982374928582",
+                    "api_secret", "ZM54qomggmRWESmK2QQgui7_WPo"));
+
+
+            // Extraer el identificador de la imagen de la URL
+            String publicId = image.getUrl().substring(image.getUrl().lastIndexOf('/') + 1, image.getUrl().lastIndexOf('.'));
+
+            // Eliminar la imagen de Cloudinary
+            Map result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+
+            // Si el resultado es "ok", la eliminación fue exitosa
+            return result.get("result").equals("ok");
+        } catch (Exception e) {
+            // Si ocurre una excepción, la eliminación no fue exitosa
+            return false;
+        }
+    }
+
+    @Override
+    public void deleteImageFromDatabase(Image image) {
+        imageRepository.delete(image);
+    }
+
 
 }
 

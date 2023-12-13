@@ -41,10 +41,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/api/v1/geo/**").permitAll()
                         //.requestMatchers(HttpMethod.GET,"/api/v1/message/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v1/microentrepreneurship/**").permitAll()
+                        //.requestMatchers(HttpMethod.POST,"/api/v1/microentrepreneurship/**").permitAll()
                         //.requestMatchers(HttpMethod.POST,"/api/v1/microentrepreneurship/**")
                            // .hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.GET,"/api/v1/publication/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/v1/publication/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user").hasAnyRole("USER","ADMIN")
