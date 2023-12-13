@@ -143,6 +143,7 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     // Este metodo se encarga de subir la imagen a  cloudinary y retorna la url de la imagen
     @Override
     public String uploadImage(MultipartFile file) {
+
         // datos de la cuenta de cloudinary
         Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", "dkzspm2fj",
