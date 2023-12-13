@@ -20,7 +20,6 @@ public class CategoryController {
     }
 
 
-
     // Crear una nueva categoría
     @PostMapping("/save")
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {

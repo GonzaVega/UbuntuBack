@@ -33,6 +33,8 @@ public interface CategoryService {
      */
     Category getCategoryByName(String name);
 
+    Category findCategoryById(Long id);
+
 
 
 

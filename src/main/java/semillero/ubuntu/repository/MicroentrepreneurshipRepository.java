@@ -32,4 +32,8 @@ public interface MicroentrepreneurshipRepository extends JpaRepository<Microentr
     @Query("SELECT m FROM Microentrepreneurship m WHERE m.name LIKE %:name%")
     List<Microentrepreneurship> findMicroentrepreneurshipsByName(@Param("name") String name);
 
+    // Obtener microemprendimientos activos
+    @Query("SELECT m FROM Microentrepreneurship m WHERE m.isActive = true")
+    List<Microentrepreneurship> findAllMicroentrepreneurshipsActive();
+
 }
