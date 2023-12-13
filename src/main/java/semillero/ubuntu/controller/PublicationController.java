@@ -10,12 +10,15 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/publicaciones")
+@RequestMapping("/api/v1/publication")
 public class PublicationController {
     @Autowired
     private PublicationService publicationService;
+
+
     @PostMapping
-    public Publication createPublication(@RequestBody Publication publication, User user){
+    public Publication createPublication(
+            @RequestBody Publication publication, User user) {
         return publicationService.createPublication(publication, user);
     }
 
@@ -37,11 +40,6 @@ public class PublicationController {
             publicationService.increaseViews(id);
         }
         return publicationService.getPublicationForId(id);
-    }
-
-    @GetMapping("/{id}/incrementar-visualizaciones")
-    public void increaseViews(@PathVariable Long id){
-        publicationService.increaseViews(id);
     }
 
     @GetMapping("/ultimas10")

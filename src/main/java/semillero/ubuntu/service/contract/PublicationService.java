@@ -11,8 +11,6 @@ public interface PublicationService {
 
     List<Publication> getAllPublication();
 
-    Publication getPublicationForId();
-
     Publication getPublicationForId(Long id);
 
     void increaseViews(Long id);
