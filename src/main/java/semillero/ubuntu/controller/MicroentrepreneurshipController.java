@@ -1,5 +1,6 @@
 package semillero.ubuntu.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -75,13 +76,28 @@ public class MicroentrepreneurshipController {
 
     }
 
-    @PostMapping("/saveImg")
-    public ResponseEntity<?> createMicroentrepreneurshipImg(
-        @RequestParam("name") String name, @RequestParam("country") String country,
+    /*
+     * estás teniendo problemas al intentar enviar un objeto.
+     * Esto es porque form-data se utiliza principalmente para enviar datos no anidados y archivos.
+     * Si intentas enviar un objeto complejo o anidado, puede dar lugar a errores o comportamientos inesperados.
+     *
+     *  ten en cuenta que @RequestBody no funciona con multipart/form-data
+     *
+     * Una solución común es enviar los datos del objeto Microentrepreneurship como una cadena JSON en un parámetro @RequestParam,
+     *  y luego convertir esta cadena JSON de nuevo a un objeto
+     * */
+
+    /*
+    *
+    * @RequestParam("name") String name, @RequestParam("country") String country,
         @RequestParam("province") String province,@RequestParam("city") String city,
         @RequestParam("category") Long categoryId,@RequestParam("subcategory") String subCategory,
         @RequestParam("description") String description,@RequestParam("moreInformation") String moreInformation,
-        @RequestParam("files")List<MultipartFile> files) throws Exception {
+        @RequestParam("files")List<MultipartFile> files) throws Exception
+    * */
+
+    @PostMapping("/saveImg")
+    public ResponseEntity<?> createMicroentrepreneurshipImg(@RequestParam("microentrepreneurshipJson") String microentrepreneurshipJson, @RequestParam("files") List<MultipartFile> files) throws Exception {
 
         Map<String, Object> response = new HashMap<>(); // Se crea un HashMap para almacenar la respuesta
 
@@ -95,22 +111,13 @@ public class MicroentrepreneurshipController {
             return fileValidationResponse;
         }
 
-        // Se crea el microemprendimiento Entity
-        Microentrepreneurship microentrepreneurship = new Microentrepreneurship();
-        microentrepreneurship.setName(name);
-        microentrepreneurship.setCountry(country);
-        microentrepreneurship.setProvince(province);
-        microentrepreneurship.setCity(city);
-        microentrepreneurship.setSubCategory(subCategory);
 
-        // Obtener la entidad Category
-        Category category = categoryService.findCategoryById(categoryId);
+        // Convertir la cadena JSON de nuevo a un objeto Microentrepreneurship
+        // ObjectMapper se utiliza para convertir entre objetos Java y representaciones JSON
+        ObjectMapper objectMapper = new ObjectMapper(); // Se crea un objeto ObjectMapper
+        Microentrepreneurship microentrepreneurship = objectMapper.readValue(microentrepreneurshipJson, Microentrepreneurship.class); // Se convierte la cadena JSON a un objeto Microentrepreneurship
 
-        microentrepreneurship.setCategory(category);
-        microentrepreneurship.setSubCategory(subCategory);
-        microentrepreneurship.setDescription(description);
-        microentrepreneurship.setMoreInfo(moreInformation);
-
+        System.out.println(microentrepreneurship);
 
         // Crear el microemprendimiento en la base de datos
         Microentrepreneurship createdMicroentrepreneurship = microentrepreneurshipService.createMicroentrepreneurship(microentrepreneurship);
@@ -123,7 +130,8 @@ public class MicroentrepreneurshipController {
         // Guardar el microemprendimiento con las urls de las imagenes
         microentrepreneurshipService.editMicroentrepreneurship(createdMicroentrepreneurship.getId(), createdMicroentrepreneurship);
 
-        response.put("message", "Microemprendimiento creado con éxito");
+       response.put("message", "Microemprendimiento creado con éxito");
+        response.put("microentrepreneurship", createdMicroentrepreneurship);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
 
@@ -131,7 +139,7 @@ public class MicroentrepreneurshipController {
 
 
     @PostMapping("/saveprueba")
-    public ResponseEntity<?> createMicroentrepreneurshipPrueba( @RequestBody Prueba prueba, @RequestParam("files") List<MultipartFile> files ) {
+    public ResponseEntity<?> createMicroentrepreneurshipPrueba( @RequestParam("microentrepreneurshipJson")String prueba, @RequestParam("files") List<MultipartFile> files ) {
         // @Valid se utiliza para hacer las validaciones definidas en el modelo, si no se utiliza, no se ejecuta la validación
         // BindingResult result se utiliza para capturar los errores de validación
 
