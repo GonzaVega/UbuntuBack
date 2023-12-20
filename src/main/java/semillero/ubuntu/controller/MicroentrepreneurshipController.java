@@ -11,9 +11,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import semillero.ubuntu.dto.CategoryDto;
+import semillero.ubuntu.dto.MicroentrepreneurshipDto;
 import semillero.ubuntu.entities.Category;
 import semillero.ubuntu.entities.Image;
 import semillero.ubuntu.entities.Microentrepreneurship;
+import semillero.ubuntu.mapper.CategoryMapper;
+import semillero.ubuntu.repository.CategoryRepository;
 import semillero.ubuntu.service.contract.CategoryService;
 import semillero.ubuntu.service.contract.MicroentrepreneurshipService;
 
@@ -28,6 +32,12 @@ import static semillero.ubuntu.utils.FileValidator.validateFiles;
 public class MicroentrepreneurshipController {
     private final MicroentrepreneurshipService microentrepreneurshipService;
     private final CategoryService categoryService;
+
+    @Autowired
+    CategoryRepository categoryRepository;
+
+    @Autowired
+    CategoryMapper categoryMapper;
 
     @Autowired
     public MicroentrepreneurshipController(MicroentrepreneurshipService microentrepreneurshipService, CategoryService categoryService) {
@@ -65,128 +75,108 @@ public class MicroentrepreneurshipController {
     * */
 
     @PostMapping("/save")
-    public ResponseEntity<?> createMicroentrepreneurshipImg(@RequestParam("microentrepreneurshipJson") String microentrepreneurshipJson, @RequestParam("files") List<MultipartFile> files) throws Exception {
+    public ResponseEntity<?> createMicroentrepreneurshipImg(@RequestParam("name") String name,
+                                                            @RequestParam("country") String country,
+                                                            @RequestParam("province") String province,
+                                                            @RequestParam("city") String city,
+                                                            @RequestParam("category") Long category,
+                                                            @RequestParam("subcategory") String subcategory,
+                                                            @RequestParam("description") String description,
+                                                            @RequestParam("moreInfo") String moreInfo,
+                                                            @RequestParam("multipartImages") MultipartFile[] multipartImages) throws Exception {
+        MicroentrepreneurshipDto microentrepreneurshipDto = new MicroentrepreneurshipDto();
+        microentrepreneurshipDto.setName(name);
+        microentrepreneurshipDto.setCountry(country);
+        microentrepreneurshipDto.setProvince(province);
+        microentrepreneurshipDto.setCity(city);
 
-        Map<String, Object> response = new HashMap<>(); // Se crea un HashMap para almacenar la respuesta
+        Optional<Category> categoryInfo = categoryRepository.findById(category);
+        microentrepreneurshipDto.setCategory(categoryMapper.categoryEntityToDto(categoryInfo.get()));
+        microentrepreneurshipDto.setSubCategory(subcategory);
+        microentrepreneurshipDto.setDescription(description);
+        microentrepreneurshipDto.setMoreInfo(moreInfo);
+        microentrepreneurshipDto.setMultipartImages(multipartImages);
 
-        // Validar los archivos de imagen y devuelve un ResponseEntity de acuerdo al resultado de la validación
-        ResponseEntity<?> fileValidationResponse = validateFiles(files);
-
-        // Si la validación falla, se retorna el ResponseEntity con el error
-        // getStatusCode() obtiene el estado HTTP de la respuesta,
-        // is2xxSuccessful() verifica si el estado es 2xx (200, 201, 202, etc)m es decir, si la respuesta es exitosa
-        if (!fileValidationResponse.getStatusCode().is2xxSuccessful()) {
-            return fileValidationResponse;
-        }
-
-        // Convertir la cadena JSON de nuevo a un objeto Microentrepreneurship
-        // ObjectMapper se utiliza para convertir entre objetos Java y representaciones JSON
-        ObjectMapper objectMapper = new ObjectMapper(); // Se crea un objeto ObjectMapper
-        Microentrepreneurship microentrepreneurship = objectMapper.readValue(microentrepreneurshipJson, Microentrepreneurship.class); // Se convierte la cadena JSON a un objeto Microentrepreneurship
-
-        // Crear el microemprendimiento en la base de datos
-        Microentrepreneurship createdMicroentrepreneurship = microentrepreneurshipService.createMicroentrepreneurship(microentrepreneurship);
-
-        // Guardar las imagenes
-        List<Image> images = new ArrayList<>();
-
-        for (MultipartFile file : files) {
-            String url = microentrepreneurshipService.uploadImage(file);
-            Image image = new Image();
-            image.setUrl(url);
-            image.setName(file.getOriginalFilename());
-            image.setMicroentrepreneurship(createdMicroentrepreneurship);
-            images.add(image);
-        }
-
-        createdMicroentrepreneurship.setImages(images);
-
-        // Guardar el microemprendimiento con las urls de las imagenes
-        microentrepreneurshipService.editMicroentrepreneurship(createdMicroentrepreneurship.getId(), createdMicroentrepreneurship);
-
-       response.put("message", "Microemprendimiento creado con éxito");
-        response.put("microentrepreneurship", createdMicroentrepreneurship);
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return microentrepreneurshipService.createMicroentrepreneurship(microentrepreneurshipDto);
 
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> editMicroentrepreneurship(@PathVariable Long id,  @RequestParam("microentrepreneurshipJson") String microentrepreneurshipJson, @RequestParam("files") List<MultipartFile> files) throws JsonProcessingException {
-
-        Map<String, Object> response = new HashMap<>();
-
-        // Convertir la cadena JSON de nuevo a un objeto Microentrepreneurship
-        ObjectMapper objectMapper = new ObjectMapper();
-        Microentrepreneurship microentrepreneurship = objectMapper.readValue(microentrepreneurshipJson, Microentrepreneurship.class);
-
-        try {
-            // Obtener el microemprendimiento existente
-            Microentrepreneurship existingMicroentrepreneurship = microentrepreneurshipService.getMicroentrepreneurshipById(id);
-
-            // Si las imágenes no están vacías se suben
-            if (!files.isEmpty() && !files.get(0).isEmpty()){
-
-                // Obtener los nombres de los archivos de las imágenes del JSON
-                List<String> jsonImageNames = microentrepreneurship.getImages().stream()
-                        .map(Image::getName)
-                        .collect(Collectors.toList());
-
-                // Obtener las imágenes del microemprendimiento existente
-                List<Image> existingImages = existingMicroentrepreneurship.getImages();
-
-                // Elimina las imágenes que no están en el JSON (por el nombre) para agregar las nuevas imágenes
-                List<Image> newImages = existingImages.stream()
-                        .filter(i -> jsonImageNames.contains(i.getName())) // Filtra las imágenes cuando el nombre de la imagen existente está en la lista de nombres de imágenes del JSON
-                        .collect(Collectors.toList());
-
-                for (MultipartFile file : files) {
-                    String imageName = file.getOriginalFilename();
-                    // Si la imagen no existe en el JSON (no está en la lista de nombres de imágenes del JSON) subirla y agregarla a la lista de nuevas imágenes
-                    if (!jsonImageNames.contains(imageName)) {
-                        // La imagen es nueva, subirla y agregarla a la lista de nuevas imágenes
-                        String imageUrl = microentrepreneurshipService.uploadImage(file);
-                        Image image = new Image();
-                        image.setUrl(imageUrl);
-                        image.setName(imageName);
-                        image.setMicroentrepreneurship(existingMicroentrepreneurship);
-                        newImages.add(image);
-                    }
-                    else{
-                        // La imagen ya existe, agregarla a la lista de nuevas imágenes
-                        Image image = microentrepreneurship.getImages().stream()
-                                .filter(i -> i.getName().equals(imageName))
-                                .findFirst()
-                                .orElse(null);
-                        newImages.add(image);
-
-                    }
-                    // Agregar las nuevas imágenes a la lista existente de imágenes
-                    microentrepreneurship.getImages().addAll(newImages);
-                }
-
-                // Reemplazar las imágenes existentes con las nuevas imágenes
-                microentrepreneurship.setImages(newImages);
-            }
-
-            else {
-                // Si las imágenes están vacías, se mantienen las imágenes existentes
-                microentrepreneurship.setImages(existingMicroentrepreneurship.getImages());
-            }
-
-            // Editar el microemprendimiento
-            Microentrepreneurship editedMicroentrepreneurship = microentrepreneurshipService.editMicroentrepreneurship(existingMicroentrepreneurship.getId(), microentrepreneurship);
-
-            response.put("message", "Microemprendimiento editado con éxito");
-            response.put("microentrepreneurship", editedMicroentrepreneurship);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-
-            } catch(Exception e){
-                response.put("error", e.getMessage());
-                return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-        }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<?> editMicroentrepreneurship(@PathVariable Long id,  @RequestParam("microentrepreneurshipJson") String microentrepreneurshipJson, @RequestParam("files") List<MultipartFile> files) throws JsonProcessingException {
+//
+//        Map<String, Object> response = new HashMap<>();
+//
+//        // Convertir la cadena JSON de nuevo a un objeto Microentrepreneurship
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        Microentrepreneurship microentrepreneurship = objectMapper.readValue(microentrepreneurshipJson, Microentrepreneurship.class);
+//
+//        try {
+//            // Obtener el microemprendimiento existente
+//            Microentrepreneurship existingMicroentrepreneurship = microentrepreneurshipService.getMicroentrepreneurshipById(id);
+//
+//            // Si las imágenes no están vacías se suben
+//            if (!files.isEmpty() && !files.get(0).isEmpty()){
+//
+//                // Obtener los nombres de los archivos de las imágenes del JSON
+//                List<String> jsonImageNames = microentrepreneurship.getImages().stream()
+//                        .map(Image::getName)
+//                        .collect(Collectors.toList());
+//
+//                // Obtener las imágenes del microemprendimiento existente
+//                List<Image> existingImages = existingMicroentrepreneurship.getImages();
+//
+//                // Elimina las imágenes que no están en el JSON (por el nombre) para agregar las nuevas imágenes
+//                List<Image> newImages = existingImages.stream()
+//                        .filter(i -> jsonImageNames.contains(i.getName())) // Filtra las imágenes cuando el nombre de la imagen existente está en la lista de nombres de imágenes del JSON
+//                        .collect(Collectors.toList());
+//
+//                for (MultipartFile file : files) {
+//                    String imageName = file.getOriginalFilename();
+//                    // Si la imagen no existe en el JSON (no está en la lista de nombres de imágenes del JSON) subirla y agregarla a la lista de nuevas imágenes
+//                    if (!jsonImageNames.contains(imageName)) {
+//                        // La imagen es nueva, subirla y agregarla a la lista de nuevas imágenes
+//                        String imageUrl = microentrepreneurshipService.uploadImage(file);
+//                        Image image = new Image();
+//                        image.setUrl(imageUrl);
+//                        image.setName(imageName);
+//                        image.setMicroentrepreneurship(existingMicroentrepreneurship);
+//                        newImages.add(image);
+//                    }
+//                    else{
+//                        // La imagen ya existe, agregarla a la lista de nuevas imágenes
+//                        Image image = microentrepreneurship.getImages().stream()
+//                                .filter(i -> i.getName().equals(imageName))
+//                                .findFirst()
+//                                .orElse(null);
+//                        newImages.add(image);
+//
+//                    }
+//                    // Agregar las nuevas imágenes a la lista existente de imágenes
+//                    microentrepreneurship.getImages().addAll(newImages);
+//                }
+//
+//                // Reemplazar las imágenes existentes con las nuevas imágenes
+//                microentrepreneurship.setImages(newImages);
+//            }
+//
+//            else {
+//                // Si las imágenes están vacías, se mantienen las imágenes existentes
+//                microentrepreneurship.setImages(existingMicroentrepreneurship.getImages());
+//            }
+//
+//            // Editar el microemprendimiento
+//            Microentrepreneurship editedMicroentrepreneurship = microentrepreneurshipService.editMicroentrepreneurship(existingMicroentrepreneurship.getId(), microentrepreneurship);
+//
+//            response.put("message", "Microemprendimiento editado con éxito");
+//            response.put("microentrepreneurship", editedMicroentrepreneurship);
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//
+//            } catch(Exception e){
+//                response.put("error", e.getMessage());
+//                return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//            }
+//
+//        }
 
     @PatchMapping("/{id}/hide")
     public ResponseEntity<Map<String, Object>> hideMicroentrepreneurship(@PathVariable Long id) {

@@ -1,13 +1,16 @@
 package semillero.ubuntu.utils;
 
+import jakarta.persistence.Column;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class FileValidator {
 
     public static boolean isImage(MultipartFile file) {

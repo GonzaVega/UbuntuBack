@@ -3,21 +3,23 @@ package semillero.ubuntu.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import semillero.ubuntu.dto.PublicationDto;
 import semillero.ubuntu.entities.Publication;
-import semillero.ubuntu.entities.User;
+import semillero.ubuntu.entities.UserEntity;
 import semillero.ubuntu.mapper.PublicationMapper;
 import semillero.ubuntu.repository.PublicationRepository;
+import semillero.ubuntu.repository.UserRepository;
 import semillero.ubuntu.service.contract.PublicationService;
+import semillero.ubuntu.utils.FileValidator;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+
 @Service
-public class PublicarionImpl implements PublicationService {
+public class PublicationImpl implements PublicationService {
     @Autowired
     private PublicationRepository publicationRepository;
 
@@ -27,29 +29,52 @@ public class PublicarionImpl implements PublicationService {
     @Autowired
     private FileUploadImpl fileUploadService;
 
+    @Autowired
+    private UserRepository UserRepository;
+
+    @Autowired
+    private FileValidator fileValidator;
+
     //guarda la publicacion
     @Override
-    public ResponseEntity<?> createPublication(PublicationDto publicationDTO) {
+    public ResponseEntity<?> createPublication(PublicationDto publicationDTO, Authentication authentication){
         //get the user id from the spring security sesion
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails currentUser = (UserDetails) authentication.getPrincipal();
-        String username = currentUser.getUsername();
-
-        System.out.println("username: " + username );
-        System.out.println("currentUser: " + currentUser);
-
-        // Validaciones adicionales en la capa de servicio si es necesario
-        validatePublicationDTO(publicationDTO);
+        //Authentication
+        //Authentication authenticationn = SecurityContextHolder.getContext().getAuthentication();
+        //UserEntity currentUser = (UserEntity) authentication.getPrincipal();
+//        String username = currentUser.getUsername();
+//
+//        System.out.println("username: " + username );
+        String username  = authentication.getName();
+        System.out.println("currentUser: " + authentication.getPrincipal() );
+        Optional<UserEntity> currentUser = UserRepository.findByEmail(username);
 
         // Mapear DTO a entidad
         Publication publication = publicationMapper.mapDtoToEntity(publicationDTO);
 
-        // Procesar las imágenes (ejemplo: aquí asumo que las imágenes son URLs)
         //List<String> processedImages = processImages(publicationDTO.getImages());
-        publication.setUser((User) currentUser);
+        publication.setUser(currentUser.get());
 
         // Asignar las imágenes procesadas a la entidad
+        // first validate the images and then add them to the publication
+
         try {
+            //convert array multipart to list of images multipart
+            List<MultipartFile> multipartImages = List.of(publicationDTO.getMultipartImages());
+            for(MultipartFile file : multipartImages){
+                System.out.println(file.getBytes());
+            }
+
+            //validate images
+            try {
+                ResponseEntity<?> fileValidationResponse = fileValidator.validateFiles(multipartImages);
+                if (!fileValidationResponse.getStatusCode().is2xxSuccessful()) {
+                    return fileValidationResponse;
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
             publication.setImages(fileUploadService.uploadImage(publicationDTO.getMultipartImages()));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -58,23 +83,8 @@ public class PublicarionImpl implements PublicationService {
         // Persistir la entidad
         publicationRepository.save(publication);
 
-        // Mapear DTO a entidad
-        Publication publicationEntity = publicationMapper.mapDtoToEntity(publicationDTO);
 
-        return ResponseEntity.ok(publicationEntity);
-    }
-
-    private void validatePublicationDTO(PublicationDto publicationDto) {
-        // Realizar validaciones adicionales si es necesario
-        // Por ejemplo, puedes verificar ciertas condiciones en los datos del DTO
-        // y lanzar excepciones si las condiciones no se cumplen.
-    }
-
-    private List<String> processImages(List<String> images) {
-        //process images with cloudinary
-
-
-        return images;
+        return ResponseEntity.ok(publication);
     }
 
     @Override

@@ -3,23 +3,45 @@ package semillero.ubuntu.service.impl;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import semillero.ubuntu.dto.MicroentrepreneurshipDto;
 import semillero.ubuntu.entities.Image;
 import semillero.ubuntu.entities.Microentrepreneurship;
+import semillero.ubuntu.entities.UserEntity;
 import semillero.ubuntu.exception.CloudinaryException;
+import semillero.ubuntu.mapper.MicroentrepreneurshipMapper;
 import semillero.ubuntu.repository.ImageRepository;
 import semillero.ubuntu.repository.MicroentrepreneurshipRepository;
+import semillero.ubuntu.repository.UserRepository;
 import semillero.ubuntu.service.contract.MicroentrepreneurshipService;
+import semillero.ubuntu.utils.FileValidator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipService {
 
     // Inyección de dependencias a través del constructor
+    @Autowired
+    private semillero.ubuntu.repository.UserRepository UserRepository;
+
+    @Autowired
+    private MicroentrepreneurshipMapper microentrepreneurshipMapper;
+
+    @Autowired
+    private FileUploadImpl fileUploadService;
+
+    @Autowired
+    private FileValidator fileValidator;
+
     private final MicroentrepreneurshipRepository microentrepreneurshipRepository;
     private final ImageRepository imageRepository;
     public MicroentrepreneurshipServiceImpl(MicroentrepreneurshipRepository microentrepreneurshipRepository, ImageRepository imageRepository) {
@@ -27,9 +49,42 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         this.imageRepository = imageRepository;
     }
 
+//    @Override
+//    public Microentrepreneurship createMicroentrepreneurship(Microentrepreneurship microentrepreneurship) {
+//    return microentrepreneurshipRepository.save(microentrepreneurship);
+//    }
+
     @Override
-    public Microentrepreneurship createMicroentrepreneurship(Microentrepreneurship microentrepreneurship) {
-    return microentrepreneurshipRepository.save(microentrepreneurship);
+    public ResponseEntity<?> createMicroentrepreneurship(MicroentrepreneurshipDto microentrepreneurshipDto){
+
+        //mapea dto a entidad
+        Microentrepreneurship microentrepreneurship = microentrepreneurshipMapper.mapToEntity(microentrepreneurshipDto);
+
+        try {
+            //convert array multipart to list of images multipart
+            List<MultipartFile> multipartImages = List.of(microentrepreneurshipDto.getMultipartImages());
+            for(MultipartFile file : multipartImages){
+                System.out.println(file.getBytes());
+            }
+
+            //validate images
+            try {
+                ResponseEntity<?> fileValidationResponse = fileValidator.validateFiles(multipartImages);
+                if (!fileValidationResponse.getStatusCode().is2xxSuccessful()) {
+                    return fileValidationResponse;
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            microentrepreneurship.setImages(fileUploadService.uploadImage(microentrepreneurshipDto.getMultipartImages()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Persistir la entidad
+        microentrepreneurshipRepository.save(microentrepreneurship);
+        return ResponseEntity.ok(microentrepreneurship);
     }
 
     @Override

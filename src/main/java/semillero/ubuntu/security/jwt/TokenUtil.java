@@ -3,7 +3,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import semillero.ubuntu.entities.User;
+import semillero.ubuntu.entities.UserEntity;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ public class TokenUtil {
     private String JWT_SECRET_KEY;
     private static final long EXPIRATION = 864000000L; // 10 days
 
-    public String generateToken(User user, String picture) {
+    public String generateToken(UserEntity user, String picture) {
         Date issuedAt = new Date(System.currentTimeMillis());
         Date expiryDate = new Date(issuedAt.getTime() + EXPIRATION);  // válido por 10 días
 
@@ -31,7 +31,7 @@ public class TokenUtil {
                 .compact();
     }
 
-    private Map<String, Object> genereteClaims (User user,String picture) {
+    private Map<String, Object> genereteClaims (UserEntity user, String picture) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("name", user.getFullName());
         claims.put("role", user.getRole().name());

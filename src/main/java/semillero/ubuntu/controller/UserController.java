@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import semillero.ubuntu.entities.User;
+import semillero.ubuntu.entities.UserEntity;
 import semillero.ubuntu.service.contract.UserService;
 
 @RestController
@@ -15,13 +15,13 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> saveEUser(@RequestBody User newUser) {
+    public ResponseEntity<UserEntity> saveEUser(@RequestBody UserEntity newUser) {
         return new ResponseEntity<>(userService.saveUser(newUser), HttpStatus.CREATED);
     }
 
     @PutMapping("{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long userId, @RequestBody User updatedUser) {
-        User updateUser = userService.updateUser(updatedUser, userId);
+    public ResponseEntity<UserEntity> updateUser(@PathVariable Long userId, @RequestBody UserEntity updatedUser) {
+        UserEntity updateUser = userService.updateUser(updatedUser, userId);
 
         if (updateUser != null) {
             return new ResponseEntity<>(updateUser, HttpStatus.OK);
@@ -31,8 +31,8 @@ public class UserController {
     }
 
     @PutMapping("/disable/{userId}")
-    public ResponseEntity<User> disableUser(@PathVariable Long userId) {
-        User disableUser = userService.disableUser(userId);
+    public ResponseEntity<UserEntity> disableUser(@PathVariable Long userId) {
+        UserEntity disableUser = userService.disableUser(userId);
 
         if (disableUser != null) {
             return new ResponseEntity<>(disableUser, HttpStatus.OK);

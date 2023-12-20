@@ -10,12 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import semillero.ubuntu.security.jwt.TokenUtil;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import semillero.ubuntu.entities.User;
+import semillero.ubuntu.entities.UserEntity;
 import semillero.ubuntu.service.contract.UserService;
 
 import java.util.HashMap;
@@ -62,7 +60,7 @@ public class AuthController {
             String picture = (String) googleUserPayload.get("picture");
 
             // Verificar si el usuario ya existe en la base de datos
-            User existingUser = userService.findUserByEmail(email);
+            UserEntity existingUser = userService.findUserByEmail(email);
             if(existingUser == null){
                 throw new Exception("Usuario no registrado");
             }

@@ -5,10 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import semillero.ubuntu.entities.User;
+import semillero.ubuntu.entities.UserEntity;
 import semillero.ubuntu.repository.UserRepository;
 import semillero.ubuntu.service.contract.UserService;
 
@@ -23,15 +22,15 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User saveUser(User user) {
+    public UserEntity saveUser(UserEntity user) {
         logger.info("Save user");
         return userRepository.save(user);
     }
 
     @Override
-    public User updateUser(User user, Long userId) {
+    public UserEntity updateUser(UserEntity user, Long userId) {
         logger.info("Update user");
-        User updateUser = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("The User with ID: " + userId + " was not found"));
+        UserEntity updateUser = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("The User with ID: " + userId + " was not found"));
 
         if (updateUser != null) {
             updateUser.setName(user.getName());
@@ -48,9 +47,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User disableUser(Long userId) {
+    public UserEntity disableUser(Long userId) {
         logger.info("Disable User");
-        User disableUser = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("The User with email: " + userId + " was not found"));
+        UserEntity disableUser = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("The User with email: " + userId + " was not found"));
 
         if (disableUser.getDisabled() == true) {
             disableUser.setDisabled(false);
@@ -64,9 +63,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserByEmail(String email) {
+    public UserEntity findUserByEmail(String email) {
         logger.info("Find User by Email");
-        User user = userRepository.findByEmail(email)
+        UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("The User with email: " + email + " was not found"));
 
         return user;
@@ -80,7 +79,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username)
+        UserEntity user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
 
         return new org.springframework.security.core.userdetails.User(

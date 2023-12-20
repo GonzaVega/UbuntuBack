@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v2/")
+@RequestMapping("/api/v1/message")
 public class MessageController {
 
     @Autowired

@@ -8,12 +8,12 @@ import semillero.ubuntu.entities.Publication;
 @Mapper(componentModel = "spring")
 public interface PublicationMapper {
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "id", ignore = false)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "views", ignore = true)
-    @Mapping(target = "images", ignore = true) // Ignoramos la lista de imágenes, ya que será procesada
+    @Mapping(target = "images", ignore = false) // Ignoramos la lista de imágenes, ya que será procesada
     Publication mapDtoToEntity(PublicationDto publicationDto);
 
     @Mapping(target = "images", ignore = true) // Ignoramos la lista de imágenes, ya que será procesada
