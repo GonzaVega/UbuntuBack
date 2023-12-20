@@ -16,11 +16,11 @@ public class PublicationController {
     private PublicationService publicationService;
 
 
-    @PostMapping("/create")
-    public Publication createPublication(
-            @RequestBody Publication publication, User user) {
-        return publicationService.createPublication(publication, user);
-    }
+//    @PostMapping("/create")
+//    public Publication createPublication(
+//            @RequestBody Publication publication, User user) {
+//        return publicationService.createPublication(publication, user);
+//    }
 
     @GetMapping
     public List<Publication> getAllPublication(){

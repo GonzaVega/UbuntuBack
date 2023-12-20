@@ -24,7 +24,7 @@ import static semillero.ubuntu.utils.FileValidator.validateFiles;
 
 
 @RestController
-@RequestMapping("/api/v1/microentrepreneurship/")
+@RequestMapping("/api/v1/microentrepreneurship")
 public class MicroentrepreneurshipController {
     private final MicroentrepreneurshipService microentrepreneurshipService;
     private final CategoryService categoryService;
