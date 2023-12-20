@@ -269,5 +269,32 @@ public class MicroentrepreneurshipController {
 
         return new ResponseEntity<>(response, status);
     }
+    // La anotación @Transactional en Spring se utiliza para indicar que un método debe ser ejecutado dentro de una transacción.
+    @GetMapping("/find/category/{idCategory}")
+    public ResponseEntity< Map<String,Object> > findMicroentrepreneurshipsByCategory(@PathVariable Long idCategory) {
+
+        Map<String, Object> response = new HashMap<>();
+        HttpStatus status = HttpStatus.OK;
+        List<Microentrepreneurship>  microentrepreneurships = null;
+
+        // Valida que el nombre no esté vacío
+        if (idCategory == null) {
+            response.put("error", "El id de la categoria no puede estar vacío");
+            status = HttpStatus.BAD_REQUEST;
+        }
+        else {
+            microentrepreneurships = microentrepreneurshipService.findMicroentrepreneurshipsByCategory(idCategory);
+            if (microentrepreneurships.isEmpty()) {
+                response.put("Message", "No se encontraron microemprendimientos asociados a esta categoria");
+                status = HttpStatus.NOT_FOUND;
+            }
+            else {
+                response.put("microentrepreneurships", microentrepreneurships);
+                status = HttpStatus.OK;
+            }
+        }
+
+        return new ResponseEntity<>(response, status);
+    }
 
 }
