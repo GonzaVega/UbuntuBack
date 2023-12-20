@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import semillero.ubuntu.entities.Image;
 import semillero.ubuntu.entities.Microentrepreneurship;
@@ -139,6 +140,21 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         }
 
         return imageUrls;
+    }
+
+    // Este método del servicio está anotado con @Transactional, lo que significa que se ejecutará dentro de una transacción gestionada por Spring. Al cargar Microentrepreneurship dentro de este método, la colección images debería cargarse sin lanzar la excepción LazyInitializationException.
+    @Transactional// Se utiliza para que se ejecute la consulta en una transacción,Esto asegurará que la sesión de Hibernate permanezca abierta hasta que se haya completado la operación.
+    @Override
+    public List<Microentrepreneurship> findMicroentrepreneurshipsByCategory(Long idCategory) {
+        // Retorna microemprendimientos por coincidencia de categoria
+        List<Microentrepreneurship> microentrepreneurships = microentrepreneurshipRepository.findMicroentrepreneurshipsByCategory(idCategory);
+
+        // Accede a la colección images de cada microemprendimiento para forzar la carga perezosa
+        for (Microentrepreneurship microentrepreneurship : microentrepreneurships) {
+            microentrepreneurship.getImages().size();  // Esto forzará la carga de la colección images
+        }
+
+        return microentrepreneurships;
     }
 
     // Este metodo se encarga de subir la imagen a  cloudinary y retorna la url de la imagen
