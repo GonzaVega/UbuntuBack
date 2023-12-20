@@ -44,6 +44,8 @@ public interface MicroentrepreneurshipService {
 
      void deleteImageFromDatabase(Image image);
 
+     List<Microentrepreneurship> findMicroentrepreneurshipsByCategory(Long id);
+
 
 
     }
