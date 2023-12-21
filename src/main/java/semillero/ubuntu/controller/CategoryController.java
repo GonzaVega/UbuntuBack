@@ -9,7 +9,7 @@ import semillero.ubuntu.service.contract.CategoryService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/category")
+@RequestMapping("${api.url}/category")
 public class CategoryController {
 
     // Inyección de dependencias a través del constructor

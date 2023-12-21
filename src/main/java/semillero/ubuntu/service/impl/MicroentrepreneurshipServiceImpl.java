@@ -5,18 +5,13 @@ import com.cloudinary.utils.ObjectUtils;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import semillero.ubuntu.dto.MicroentrepreneurshipDto;
-import semillero.ubuntu.entities.Image;
 import semillero.ubuntu.entities.Microentrepreneurship;
-import semillero.ubuntu.entities.UserEntity;
 import semillero.ubuntu.exception.CloudinaryException;
 import semillero.ubuntu.mapper.MicroentrepreneurshipMapper;
-import semillero.ubuntu.repository.ImageRepository;
 import semillero.ubuntu.repository.MicroentrepreneurshipRepository;
-import semillero.ubuntu.repository.UserRepository;
 import semillero.ubuntu.service.contract.MicroentrepreneurshipService;
 import semillero.ubuntu.utils.FileValidator;
 
@@ -24,7 +19,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipService {
@@ -43,10 +37,9 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     private FileValidator fileValidator;
 
     private final MicroentrepreneurshipRepository microentrepreneurshipRepository;
-    private final ImageRepository imageRepository;
-    public MicroentrepreneurshipServiceImpl(MicroentrepreneurshipRepository microentrepreneurshipRepository, ImageRepository imageRepository) {
+
+    public MicroentrepreneurshipServiceImpl(MicroentrepreneurshipRepository microentrepreneurshipRepository) {
         this.microentrepreneurshipRepository = microentrepreneurshipRepository;
-        this.imageRepository = imageRepository;
     }
 
 //    @Override
@@ -216,35 +209,35 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
 
     }
 
-    @Override
-    public boolean deleteImageFromCloudinary(Image image) {
-        try {
-
-            // datos de la cuenta de cloudinary
-            Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-                    "cloud_name", "dkzspm2fj",
-                    "api_key", "229982374928582",
-                    "api_secret", "ZM54qomggmRWESmK2QQgui7_WPo"));
-
-
-            // Extraer el identificador de la imagen de la URL
-            String publicId = image.getUrl().substring(image.getUrl().lastIndexOf('/') + 1, image.getUrl().lastIndexOf('.'));
-
-            // Eliminar la imagen de Cloudinary
-            Map result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-
-            // Si el resultado es "ok", la eliminación fue exitosa
-            return result.get("result").equals("ok");
-        } catch (Exception e) {
-            // Si ocurre una excepción, la eliminación no fue exitosa
-            return false;
-        }
-    }
-
-    @Override
-    public void deleteImageFromDatabase(Image image) {
-        imageRepository.delete(image);
-    }
+//    @Override
+//    public boolean deleteImageFromCloudinary(Image image) {
+//        try {
+//
+//            // datos de la cuenta de cloudinary
+//            Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
+//                    "cloud_name", "dkzspm2fj",
+//                    "api_key", "229982374928582",
+//                    "api_secret", "ZM54qomggmRWESmK2QQgui7_WPo"));
+//
+//
+//            // Extraer el identificador de la imagen de la URL
+//            String publicId = image.getUrl().substring(image.getUrl().lastIndexOf('/') + 1, image.getUrl().lastIndexOf('.'));
+//
+//            // Eliminar la imagen de Cloudinary
+//            Map result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+//
+//            // Si el resultado es "ok", la eliminación fue exitosa
+//            return result.get("result").equals("ok");
+//        } catch (Exception e) {
+//            // Si ocurre una excepción, la eliminación no fue exitosa
+//            return false;
+//        }
+//    }
+//
+//    @Override
+//    public void deleteImageFromDatabase(Image image) {
+//        imageRepository.delete(image);
+//    }
 
 
 }

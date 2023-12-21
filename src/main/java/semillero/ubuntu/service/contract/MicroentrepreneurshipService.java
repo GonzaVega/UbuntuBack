@@ -1,10 +1,8 @@
 package semillero.ubuntu.service.contract;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 import semillero.ubuntu.dto.MicroentrepreneurshipDto;
-import semillero.ubuntu.entities.Image;
 import semillero.ubuntu.entities.Microentrepreneurship;
 
 import java.util.List;
@@ -44,9 +42,9 @@ public interface MicroentrepreneurshipService {
 
     String uploadImage(MultipartFile file);
 
-    boolean deleteImageFromCloudinary(Image image);
-
-     void deleteImageFromDatabase(Image image);
+//    boolean deleteImageFromCloudinary(Image image);
+//
+//     void deleteImageFromDatabase(Image image);
 
 
 

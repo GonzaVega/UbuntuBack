@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/geo")
+@RequestMapping("${api.url}/geo")
 public class GeoController {
 
     private final CountryRepository countryRepository;

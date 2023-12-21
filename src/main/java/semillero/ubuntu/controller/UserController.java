@@ -8,7 +8,7 @@ import semillero.ubuntu.entities.UserEntity;
 import semillero.ubuntu.service.contract.UserService;
 
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("${api.url}/user")
 public class UserController {
 
     @Autowired

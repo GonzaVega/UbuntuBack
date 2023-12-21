@@ -14,7 +14,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/v1/publication")
+@RequestMapping("${api.url}/publication")
 public class PublicationController {
     @Autowired
     private PublicationService publicationService;

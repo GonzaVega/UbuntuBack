@@ -1,20 +1,13 @@
 package semillero.ubuntu.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import semillero.ubuntu.dto.CategoryDto;
 import semillero.ubuntu.dto.MicroentrepreneurshipDto;
 import semillero.ubuntu.entities.Category;
-import semillero.ubuntu.entities.Image;
 import semillero.ubuntu.entities.Microentrepreneurship;
 import semillero.ubuntu.mapper.CategoryMapper;
 import semillero.ubuntu.repository.CategoryRepository;
@@ -22,13 +15,10 @@ import semillero.ubuntu.service.contract.CategoryService;
 import semillero.ubuntu.service.contract.MicroentrepreneurshipService;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static semillero.ubuntu.utils.FileValidator.validateFiles;
 
 
 @RestController
-@RequestMapping("/api/v1/microentrepreneurship")
+@RequestMapping("${api.url}/microentrepreneurship")
 public class MicroentrepreneurshipController {
     private final MicroentrepreneurshipService microentrepreneurshipService;
     private final CategoryService categoryService;
