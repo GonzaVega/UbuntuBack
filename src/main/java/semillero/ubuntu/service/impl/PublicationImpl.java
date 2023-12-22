@@ -92,15 +92,31 @@ public class PublicationImpl implements PublicationService {
         return null;
     }
 
+
     @Override
     public List<Publication> getAllPublication(){
         return publicationRepository.findAll();
     }
 
+//    @Override
+//    public Publication getPublicationForId(Long id) {
+//        return publicationRepository.findById(id).orElse(null);
+//    }
+
     @Override
-    public Publication getPublicationForId(Long id) {
-        return publicationRepository.findById(id).orElse(null);
+    public ResponseEntity<Object> getPublication(Long id) {
+        Optional<Publication> publication = publicationRepository.findById(id);
+
+        if (publication.isPresent()) {
+            Publication publicationEntity = publication.get();
+            PublicationDto publicationDto = publicationMapper.mapEntityToDto(publicationEntity);
+
+            return ResponseEntity.ok(publicationDto);
+        } else {
+            return ResponseEntity.badRequest().body("The publication does not exists");
+        }
     }
+
 
     @Override
     public void increaseViews(Long id) {

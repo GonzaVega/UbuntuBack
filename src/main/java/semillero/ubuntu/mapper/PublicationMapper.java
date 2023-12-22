@@ -16,6 +16,6 @@ public interface PublicationMapper {
     @Mapping(target = "images", ignore = false) // Ignoramos la lista de imágenes, ya que será procesada
     Publication mapDtoToEntity(PublicationDto publicationDto);
 
-    @Mapping(target = "images", ignore = true) // Ignoramos la lista de imágenes, ya que será procesada
+    @Mapping(target = "images", ignore = false) // Ignoramos la lista de imágenes, ya que será procesada
     PublicationDto mapEntityToDto(Publication publication);
 }

@@ -12,11 +12,9 @@ public interface PublicationService {
     //Publication createPublication(Publication publication);
     ResponseEntity<?> createPublication(PublicationDto publicationDTO, Authentication authentication);
     ResponseEntity<?> updatePublication(PublicationDto publicationDTO, Long id);
+    ResponseEntity<Object> getPublication(Long id);
 
     List<Publication> getAllPublication();
-
-    Publication getPublicationForId(Long id);
-
     void increaseViews(Long id);
     void changePublicationStatus(Long id);
 

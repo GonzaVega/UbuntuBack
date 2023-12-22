@@ -3,7 +3,6 @@ package semillero.ubuntu.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import semillero.ubuntu.dto.PublicationDto;
@@ -18,12 +17,7 @@ import java.util.List;
 public class PublicationController {
     @Autowired
     private PublicationService publicationService;
-
-
-//    @PostMapping("/create")
-//    public ResponseEntity<?> createPublication(@RequestParam("imagen") MultipartFile multipartImages, @Validated @RequestBody PublicationDto publicationDto, Authentication authentication) {
-//        return publicationService.createPublication(multipartImages, publicationDto,authentication);
-//    }
+    
 
     @PostMapping("/create")
     public ResponseEntity<?> createPublication(@RequestParam("multipartImages") MultipartFile[] multipartImages, @RequestParam("title") String title, @RequestParam("description") String description,  Authentication authentication) {
@@ -48,12 +42,12 @@ public class PublicationController {
 
 
     @GetMapping("/{id}")
-    public Publication getPublicationForId(@PathVariable Long id){
-        Publication publication = publicationService.getPublicationForId(id);
+    public ResponseEntity<Object> getPublicationForId(@PathVariable Long id){
+        ResponseEntity<Object> publication = publicationService.getPublication(id);
         if (publication != null){
             publicationService.increaseViews(id);
         }
-        return publicationService.getPublicationForId(id);
+        return publicationService.getPublication(id);
     }
 
     @GetMapping("/ultimas10")
