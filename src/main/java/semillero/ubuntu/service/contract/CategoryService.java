@@ -14,7 +14,7 @@ public interface CategoryService {
      * @return La categoría creada.
      *
      */
-    Category createCategory(Category category);
+    Category createFormattedCategory(Category category);
 
     /*
      *

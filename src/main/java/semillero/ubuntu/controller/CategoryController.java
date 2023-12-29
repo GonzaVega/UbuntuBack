@@ -28,7 +28,7 @@ public class CategoryController {
 
 
         try {
-            newCategory = categoryService.createCategory(category);
+            newCategory = categoryService.createFormattedCategory(category);
             return new ResponseEntity<>(newCategory, HttpStatus.CREATED);
         }
         catch (Exception e) {
