@@ -6,9 +6,11 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import semillero.ubuntu.dto.MicroentrepreneurshipDto;
 import semillero.ubuntu.entities.Image;
 import semillero.ubuntu.entities.Microentrepreneurship;
 import semillero.ubuntu.exception.CloudinaryException;
+import semillero.ubuntu.mapper.MicroentrepreneurshipMapper;
 import semillero.ubuntu.repository.ImageRepository;
 import semillero.ubuntu.repository.MicroentrepreneurshipRepository;
 import semillero.ubuntu.service.contract.MicroentrepreneurshipService;
@@ -23,19 +25,24 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     // Inyección de dependencias a través del constructor
     private final MicroentrepreneurshipRepository microentrepreneurshipRepository;
     private final ImageRepository imageRepository;
-    public MicroentrepreneurshipServiceImpl(MicroentrepreneurshipRepository microentrepreneurshipRepository, ImageRepository imageRepository) {
+    private final MicroentrepreneurshipMapper microentrepreneurshipMapper;
+
+    public MicroentrepreneurshipServiceImpl(MicroentrepreneurshipRepository microentrepreneurshipRepository, ImageRepository imageRepository, MicroentrepreneurshipMapper microentrepreneurshipMapper) {
         this.microentrepreneurshipRepository = microentrepreneurshipRepository;
         this.imageRepository = imageRepository;
+        this.microentrepreneurshipMapper = microentrepreneurshipMapper;
     }
 
-    @Override
-    public Microentrepreneurship createMicroentrepreneurship(Microentrepreneurship microentrepreneurship) {
-    return microentrepreneurshipRepository.save(microentrepreneurship);
-    }
 
     @Override
-    public Microentrepreneurship editMicroentrepreneurship(Long id,Microentrepreneurship microentrepreneurship) {
-        
+    public MicroentrepreneurshipDto createMicroentrepreneurship(Microentrepreneurship microentrepreneurship) {
+        Microentrepreneurship savedMicroentrepreneurship = microentrepreneurshipRepository.save(microentrepreneurship);
+        return microentrepreneurshipMapper.entityToDto(savedMicroentrepreneurship);
+    }
+
+   @Override
+    public MicroentrepreneurshipDto editMicroentrepreneurship(Long id, Microentrepreneurship microentrepreneurship) {
+
         // Verifica si el microemprendimiento existe
         Microentrepreneurship existingMicroentrepreneurship = microentrepreneurshipRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Microemprendimiento no encontrado con ID: " + id));
@@ -53,8 +60,10 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         existingMicroentrepreneurship.setImages(microentrepreneurship.getImages());
 
         // Guarda la entidad actualizada
-        return microentrepreneurshipRepository.save(existingMicroentrepreneurship);
+        Microentrepreneurship updatedMicroentrepreneurship = microentrepreneurshipRepository.save(existingMicroentrepreneurship);
 
+        // Convierte la entidad a DTO antes de retornarla
+        return microentrepreneurshipMapper.entityToDto(updatedMicroentrepreneurship);
     }
 
 
@@ -85,19 +94,22 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     }
 
     @Override
-    public Microentrepreneurship getMicroentrepreneurshipById(Long id) {
+    public MicroentrepreneurshipDto getMicroentrepreneurshipById(Long id) {
         // Verifica si el microemprendimiento existe
         Microentrepreneurship microentrepreneurship = microentrepreneurshipRepository.findByIdWithImages(id)
                 .orElseThrow(() -> new EntityNotFoundException("El microemprendimiento no existe"));
 
-        // Retorna el microemprendimiento
-        return microentrepreneurship;
+        // Convierte la entidad a DTO antes de retornarla
+        return microentrepreneurshipMapper.entityToDto(microentrepreneurship);
     }
 
     @Override
-    public List<Microentrepreneurship> getAllMicroentrepreneurships() {
+    public List<MicroentrepreneurshipDto> getAllMicroentrepreneurships() {
         // Retorna todos los microemprendimientos
-        return microentrepreneurshipRepository.findAllMicroentrepreneurshipsActive();
+        List<Microentrepreneurship> microentrepreneurships = microentrepreneurshipRepository.findAllMicroentrepreneurshipsActive();
+
+        // Convierte la lista de entidades a DTO antes de retornarla
+        return microentrepreneurshipMapper.entityListToDtoList(microentrepreneurships);
     }
 
     @Override
@@ -125,9 +137,12 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     }
 
     @Override
-    public List<Microentrepreneurship> findMicroentrepreneurshipsByName(String name) {
+    public List<MicroentrepreneurshipDto> findMicroentrepreneurshipsByName(String name) {
         // Retorna microemprendimientos por coincidencia de nombre
-        return microentrepreneurshipRepository.findMicroentrepreneurshipsByName(name);
+        List<Microentrepreneurship> microentrepreneurships = microentrepreneurshipRepository.findMicroentrepreneurshipsByName(name);
+
+        // Convierte la lista de entidades a DTO antes de retornarla
+        return microentrepreneurshipMapper.entityListToDtoList(microentrepreneurships);
     }
 
     @Override
@@ -143,9 +158,9 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     }
 
     // Este método del servicio está anotado con @Transactional, lo que significa que se ejecutará dentro de una transacción gestionada por Spring. Al cargar Microentrepreneurship dentro de este método, la colección images debería cargarse sin lanzar la excepción LazyInitializationException.
-    @Transactional// Se utiliza para que se ejecute la consulta en una transacción,Esto asegurará que la sesión de Hibernate permanezca abierta hasta que se haya completado la operación.
+    @Transactional
     @Override
-    public List<Microentrepreneurship> findMicroentrepreneurshipsByCategory(Long idCategory) {
+    public List<MicroentrepreneurshipDto> findMicroentrepreneurshipsByCategory(Long idCategory) {
         // Retorna microemprendimientos por coincidencia de categoria
         List<Microentrepreneurship> microentrepreneurships = microentrepreneurshipRepository.findMicroentrepreneurshipsByCategory(idCategory);
 
@@ -154,7 +169,8 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
             microentrepreneurship.getImages().size();  // Esto forzará la carga de la colección images
         }
 
-        return microentrepreneurships;
+        // Convierte la lista de entidades a DTO antes de retornarla
+        return microentrepreneurshipMapper.entityListToDtoList(microentrepreneurships);
     }
 
     // Este metodo se encarga de subir la imagen a  cloudinary y retorna la url de la imagen

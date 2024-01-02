@@ -1,6 +1,7 @@
 package semillero.ubuntu.service.contract;
 
 import org.springframework.web.multipart.MultipartFile;
+import semillero.ubuntu.dto.MicroentrepreneurshipDto;
 import semillero.ubuntu.entities.Image;
 import semillero.ubuntu.entities.Microentrepreneurship;
 
@@ -8,16 +9,16 @@ import java.util.List;
 
 public interface MicroentrepreneurshipService {
 
-    Microentrepreneurship createMicroentrepreneurship(Microentrepreneurship microentrepreneurship);
-    Microentrepreneurship editMicroentrepreneurship(Long id, Microentrepreneurship microentrepreneurship);
+    MicroentrepreneurshipDto createMicroentrepreneurship(Microentrepreneurship microentrepreneurship);
+    MicroentrepreneurshipDto editMicroentrepreneurship(Long id, Microentrepreneurship microentrepreneurship);
     void hideMicroentrepreneurship(Long id);
     // gestionar microemprendimiento
     void manageMicroentrepreneurship(Long id);
 
     // Obtener microemprendimientos por id
-    Microentrepreneurship getMicroentrepreneurshipById(Long id);
+    MicroentrepreneurshipDto getMicroentrepreneurshipById(Long id);
 
-    List<Microentrepreneurship> getAllMicroentrepreneurships();
+    List<MicroentrepreneurshipDto> getAllMicroentrepreneurships();
 
     // Cantidad de microemprendimientos
     Long countMicroentrepreneurships();
@@ -32,7 +33,7 @@ public interface MicroentrepreneurshipService {
     Object[][] countMicroentrepreneurshipsByCategories();
 
     // Obtener microemprendimientos por coincidencia de nombre
-    List<Microentrepreneurship> findMicroentrepreneurshipsByName(String name);
+    List<MicroentrepreneurshipDto> findMicroentrepreneurshipsByName(String name);
 
     // Subir las imagenes de los microemprendimientos a cloudinary
     //void uploadImagesMicroentrepreneurship(Long id, List<String> images);
@@ -44,7 +45,7 @@ public interface MicroentrepreneurshipService {
 
      void deleteImageFromDatabase(Image image);
 
-     List<Microentrepreneurship> findMicroentrepreneurshipsByCategory(Long id);
+     List<MicroentrepreneurshipDto> findMicroentrepreneurshipsByCategory(Long id);
 
 
 

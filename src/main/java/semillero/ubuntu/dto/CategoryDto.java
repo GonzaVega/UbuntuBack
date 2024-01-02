@@ -10,7 +10,6 @@ import lombok.ToString;
 @AllArgsConstructor // Genera un constructor con todos los argumentos
 @ToString // Genera el método toString
 public class CategoryDto {
-
     private Long id;
     private String name;
 
