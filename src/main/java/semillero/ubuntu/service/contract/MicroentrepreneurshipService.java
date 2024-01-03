@@ -11,13 +11,14 @@ public interface MicroentrepreneurshipService {
 
     ResponseEntity<?> createMicroentrepreneurship(MicroentrepreneurshipDto microentrepreneurshipDto);
 
-    Microentrepreneurship editMicroentrepreneurship(Long id, Microentrepreneurship microentrepreneurship);
+    ResponseEntity<?> editMicroentrepreneurship(Long id, MicroentrepreneurshipDto microentrepreneurshipDto);
+
     void hideMicroentrepreneurship(Long id);
     // gestionar microemprendimiento
     void manageMicroentrepreneurship(Long id);
 
     // Obtener microemprendimientos por id
-    Microentrepreneurship getMicroentrepreneurshipById(Long id);
+    ResponseEntity<?> getMicroentrepreneurshipById(Long id);
 
     List<Microentrepreneurship> getAllMicroentrepreneurships();
 
@@ -36,11 +37,6 @@ public interface MicroentrepreneurshipService {
     // Obtener microemprendimientos por coincidencia de nombre
     List<Microentrepreneurship> findMicroentrepreneurshipsByName(String name);
 
-    // Subir las imagenes de los microemprendimientos a cloudinary
-    //void uploadImagesMicroentrepreneurship(Long id, List<String> images);
-    List<String> UrlImg(List<MultipartFile> files);
-
-    String uploadImage(MultipartFile file);
 
 //    boolean deleteImageFromCloudinary(Image image);
 //

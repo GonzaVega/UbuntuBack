@@ -1,5 +1,6 @@
 package semillero.ubuntu.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import semillero.ubuntu.entities.Category;
 import semillero.ubuntu.entities.Microentrepreneurship;
 import semillero.ubuntu.mapper.CategoryMapper;
 import semillero.ubuntu.repository.CategoryRepository;
+import semillero.ubuntu.repository.MicroentrepreneurshipRepository;
 import semillero.ubuntu.service.contract.CategoryService;
 import semillero.ubuntu.service.contract.MicroentrepreneurshipService;
 
@@ -27,6 +29,10 @@ public class MicroentrepreneurshipController {
     CategoryRepository categoryRepository;
 
     @Autowired
+    MicroentrepreneurshipRepository microentrepreneurshipRepository;
+
+
+    @Autowired
     CategoryMapper categoryMapper;
 
     @Autowired
@@ -35,11 +41,17 @@ public class MicroentrepreneurshipController {
         this.categoryService = categoryService;
     }
 
+//    @GetMapping("/{id}")
+//    public ResponseEntity<Microentrepreneurship> getMicroentrepreneurshipById(@PathVariable Long id) {
+//        // No es necesario usar un try cath porque la excepción se está manejando en la clase GlobalExceptionHandler
+//        Microentrepreneurship microentrepreneurship = microentrepreneurshipService.getMicroentrepreneurshipById(id);
+//        return new ResponseEntity<>(microentrepreneurship, HttpStatus.OK);
+//    }
+    
     @GetMapping("/{id}")
-    public ResponseEntity<Microentrepreneurship> getMicroentrepreneurshipById(@PathVariable Long id) {
-        // No es necesario usar un try cath porque la excepción se está manejando en la clase GlobalExceptionHandler
-        Microentrepreneurship microentrepreneurship = microentrepreneurshipService.getMicroentrepreneurshipById(id);
-        return new ResponseEntity<>(microentrepreneurship, HttpStatus.OK);
+    public ResponseEntity<Object> getMicroentrepreneurshipById(@PathVariable Long id) {
+        ResponseEntity<Object> microentrepreneurship = (ResponseEntity<Object>) microentrepreneurshipService.getMicroentrepreneurshipById(id);
+        return microentrepreneurship;
     }
 
 
@@ -64,6 +76,14 @@ public class MicroentrepreneurshipController {
         @RequestParam("files")List<MultipartFile> files) throws Exception
     * */
 
+//    @PostMapping("/save")
+//    public ResponseEntity<?> createMicroentrepreneurshipImg(@Valid @RequestPart MicroentrepreneurshipDto microentrepreneurshipDto) throws Exception {
+//
+//        // Llamar al servicio con el DTO mapeado
+//        return microentrepreneurshipService.createMicroentrepreneurship(microentrepreneurshipDto);
+//    }
+
+    //crear microemprendimiento
     @PostMapping("/save")
     public ResponseEntity<?> createMicroentrepreneurshipImg(@RequestParam("name") String name,
                                                             @RequestParam("country") String country,
@@ -90,6 +110,40 @@ public class MicroentrepreneurshipController {
         return microentrepreneurshipService.createMicroentrepreneurship(microentrepreneurshipDto);
 
     }
+
+    //editar microemprendimiento
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editMicroentrepreneurship(
+            @PathVariable Long id,
+            @RequestParam String name,
+            @RequestParam String country,
+            @RequestParam String province,
+            @RequestParam String city,
+            @RequestParam Long category,
+            @RequestParam String subcategory,
+            @RequestParam String description,
+            @RequestParam String moreInfo,
+            @RequestParam("multipartImages") MultipartFile[] multipartImages) throws Exception {
+
+        MicroentrepreneurshipDto microentrepreneurshipDto = new MicroentrepreneurshipDto();
+        microentrepreneurshipDto.setName(name);
+        microentrepreneurshipDto.setCountry(country);
+        microentrepreneurshipDto.setProvince(province);
+        microentrepreneurshipDto.setCity(city);
+
+        Optional<Category> categoryInfo = categoryRepository.findById(category);
+        microentrepreneurshipDto.setCategory(categoryMapper.categoryEntityToDto(categoryInfo.get()));
+        microentrepreneurshipDto.setSubCategory(subcategory);
+        microentrepreneurshipDto.setDescription(description);
+        microentrepreneurshipDto.setMoreInfo(moreInfo);
+        microentrepreneurshipDto.setMultipartImages(multipartImages);
+
+        return microentrepreneurshipService.editMicroentrepreneurship(id, microentrepreneurshipDto);
+
+    }
+
+
+
 
 //    @PutMapping("/{id}")
 //    public ResponseEntity<?> editMicroentrepreneurship(@PathVariable Long id,  @RequestParam("microentrepreneurshipJson") String microentrepreneurshipJson, @RequestParam("files") List<MultipartFile> files) throws JsonProcessingException {
