@@ -88,8 +88,53 @@ public class PublicationImpl implements PublicationService {
     }
 
     @Override
-    public ResponseEntity<?> updatePublication(PublicationDto publicationDTO, Long id) {
-        return null;
+    public ResponseEntity<?> updatePublication(PublicationDto publicationDTO, Long id, Authentication authentication){
+
+        // Obtener el usuario logueado
+        String username  = authentication.getName();
+        Optional<UserEntity> currentUser = UserRepository.findByEmail(username);
+
+        // Obtener la publicación a actualizar
+        Optional<Publication> publicationToUpdate = publicationRepository.findById(id);
+
+        // Verificar que la publicación exista
+        if (publicationToUpdate.isEmpty()) {
+            return ResponseEntity.badRequest().body("The publication does not exists");
+        }
+
+        // Actualizar los campos de la publicación
+        Publication publicationEntity = publicationToUpdate.get();
+        publicationEntity.setTitle(publicationDTO.getTitle());
+        publicationEntity.setDescription(publicationDTO.getDescription());
+        //Si otro usuario administrador cambia la publicación, actualizamos el usuario
+        publicationEntity.setUser(currentUser.get());
+
+        try {
+            //convert array multipart to list of images multipart
+            List<MultipartFile> multipartImages = List.of(publicationDTO.getMultipartImages());
+            for(MultipartFile file : multipartImages){
+                System.out.println(file.getBytes());
+            }
+
+            //validate images
+            try {
+                ResponseEntity<?> fileValidationResponse = fileValidator.validateFiles(multipartImages);
+                if (!fileValidationResponse.getStatusCode().is2xxSuccessful()) {
+                    return fileValidationResponse;
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            publicationEntity.setImages(fileUploadService.updateImage(publicationToUpdate.get().getImages(),publicationDTO.getMultipartImages()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Persistir la entidad
+        publicationRepository.save(publicationEntity);
+
+        return ResponseEntity.ok(publicationEntity);
     }
 
 
@@ -118,6 +163,7 @@ public class PublicationImpl implements PublicationService {
     }
 
 
+    // las vistas de la publicacion se incrementan sólo cuando se llama a este endpoint no cuando se hace un get a la publicacion
     @Override
     public void increaseViews(Long id) {
         Publication publication = publicationRepository.findById(id).orElse(null);

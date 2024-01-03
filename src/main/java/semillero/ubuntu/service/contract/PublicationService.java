@@ -11,13 +11,12 @@ import java.util.List;
 public interface PublicationService {
     //Publication createPublication(Publication publication);
     ResponseEntity<?> createPublication(PublicationDto publicationDTO, Authentication authentication);
-    ResponseEntity<?> updatePublication(PublicationDto publicationDTO, Long id);
+    ResponseEntity<?> updatePublication(PublicationDto publicationDTO, Long id, Authentication authentication);
     ResponseEntity<Object> getPublication(Long id);
 
     List<Publication> getAllPublication();
     void increaseViews(Long id);
     void changePublicationStatus(Long id);
-
     List<Publication> getLast10Posts();
     List<Publication> getAllActivePublications();
 
