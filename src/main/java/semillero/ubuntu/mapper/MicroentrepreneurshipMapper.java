@@ -5,6 +5,8 @@ import org.mapstruct.Mapping;
 import semillero.ubuntu.dto.MicroentrepreneurshipDto;
 import semillero.ubuntu.entities.Microentrepreneurship;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface MicroentrepreneurshipMapper {
 
@@ -17,5 +19,9 @@ public interface MicroentrepreneurshipMapper {
 
     @Mapping(target = "images", ignore = true)
     MicroentrepreneurshipDto mapEntityToDto(Microentrepreneurship microentrepreneurship);
+
+    List<MicroentrepreneurshipDto> entityListToDtoList(List<Microentrepreneurship> microentrepreneurships);
+
+    List<Microentrepreneurship> dtoListToEntityList(List<MicroentrepreneurshipDto> microentrepreneurshipDtos);
 
 }

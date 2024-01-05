@@ -37,6 +37,8 @@ public interface MicroentrepreneurshipService {
     // Obtener microemprendimientos por coincidencia de nombre
     List<Microentrepreneurship> findMicroentrepreneurshipsByName(String name);
 
+    List<MicroentrepreneurshipDto> findMicroentrepreneurshipsByCategory(Long id);
+
 
 //    boolean deleteImageFromCloudinary(Image image);
 //

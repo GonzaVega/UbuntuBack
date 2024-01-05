@@ -3,6 +3,7 @@ package semillero.ubuntu.service.impl;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,22 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
 
     public MicroentrepreneurshipServiceImpl(MicroentrepreneurshipRepository microentrepreneurshipRepository) {
         this.microentrepreneurshipRepository = microentrepreneurshipRepository;
+    }
+
+    // Este método del servicio está anotado con @Transactional, lo que significa que se ejecutará dentro de una transacción gestionada por Spring. Al cargar Microentrepreneurship dentro de este método, la colección images debería cargarse sin lanzar la excepción LazyInitializationException.
+    @Transactional
+    @Override
+    public List<MicroentrepreneurshipDto> findMicroentrepreneurshipsByCategory(Long idCategory) {
+        // Retorna microemprendimientos por coincidencia de categoria
+        List<Microentrepreneurship> microentrepreneurships = microentrepreneurshipRepository.findMicroentrepreneurshipsByCategory(idCategory);
+
+        // Accede a la colección images de cada microemprendimiento para forzar la carga perezosa
+        for (Microentrepreneurship microentrepreneurship : microentrepreneurships) {
+            microentrepreneurship.getImages().size();  // Esto forzará la carga de la colección images
+        }
+
+        // Convierte la lista de entidades a DTO antes de retornarla
+        return microentrepreneurshipMapper.entityListToDtoList(microentrepreneurships);
     }
 
     @Override
