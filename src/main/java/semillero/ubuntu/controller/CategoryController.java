@@ -9,7 +9,7 @@ import semillero.ubuntu.service.contract.CategoryService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/category")
+@RequestMapping("${api.url}/category")
 public class CategoryController {
 
     // Inyección de dependencias a través del constructor
@@ -28,7 +28,7 @@ public class CategoryController {
 
 
         try {
-            newCategory = categoryService.createCategory(category);
+            newCategory = categoryService.createFormattedCategory(category);
             return new ResponseEntity<>(newCategory, HttpStatus.CREATED);
         }
         catch (Exception e) {
@@ -52,6 +52,5 @@ public class CategoryController {
         return ResponseEntity.ok(categories);
 
     }
-
 
 }

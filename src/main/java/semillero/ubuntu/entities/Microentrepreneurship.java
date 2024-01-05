@@ -51,17 +51,13 @@ public class Microentrepreneurship {
     @Size(max = 255, message = "La subcategoría no puede tener más de 255 caracteres")
     private String subCategory;
 
-    //@ElementCollection(fetch = FetchType.EAGER)
-    // ElementCollection Indica que la lista es una colección de elementos,facilita el manejo de colecciones de tipos básicos o en JPA sin necesidad de crear una entidad separada para la colección.
-    // FetchType.EAGER indica que la lista se cargará de forma inmediata cuando se cargue el microemprendimiento, es decir, cuando se haga una consulta a la base de datos, esto es para que se carguen las imágenes
-    @Size(min = 1, max = 3, message = "Debe haber entre 1 y 3  imágenes")
-    @OneToMany(mappedBy = "microentrepreneurship", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JsonManagedReference // Indica que se debe serializar la lista de imágenes
-    private List<Image> images;
-
     private Boolean isActive ;  // Está activo
 
     private Boolean isManaged; // Está gestionado
+
+    @Size(min = 1, max = 3, message = "Debe haber entre 1 y 3  imágenes")
+    @Column(length = 500)
+    private List<String> images;
 
     @NotBlank(message = "La descripción no puede estar en blanco")
     @Size(max = 300, message = "La descripción no puede tener más de 300 caracteres")

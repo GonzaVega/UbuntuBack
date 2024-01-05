@@ -8,7 +8,6 @@ import semillero.ubuntu.mapper.CategoryMapper;
 import semillero.ubuntu.repository.CategoryRepository;
 import semillero.ubuntu.service.contract.CategoryService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,10 +21,13 @@ public class CategoryServiceImpl implements CategoryService {
         this.categoryMapper = categoryMapper;
     }
 
+    //Se agrega una modificación para cambiar el formato al nombre de las categorías
     @Override
-    public Category createCategory(Category category) {
+    public Category createFormattedCategory(Category category) {
 
-        // Guarda la categoría en la base de datos
+        if (category.getName().contains("/")) {
+            category.setName(category.getName().replace("/", " - "));
+        }
         return categoryRepository.save(category);
 
     }
@@ -49,9 +51,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getCategoryByName(String name) {
+        // Buscar por el nombre original
+        Category category = categoryRepository.findByName(name);
 
-        return categoryRepository.findByName(name);
+        // Si no se encuentra por el nombre original, buscar por el nombre modificado
+        if (category == null && name.contains("/")) {
+            String modifiedName = name.replace("/", " - ");
+            category = categoryRepository.findByName(modifiedName);
+        }
 
+        return category;
     }
 
     @Override

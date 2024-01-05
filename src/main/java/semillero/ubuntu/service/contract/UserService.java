@@ -1,10 +1,15 @@
 package semillero.ubuntu.service.contract;
 
-import semillero.ubuntu.entities.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import semillero.ubuntu.entities.UserEntity;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
-    User saveUser(User user);
-    User updateUser(User user, String userId);
-    User disableUser(String userId);
+    UserEntity saveUser(UserEntity user);
+    UserEntity updateUser(UserEntity user, Long userId);
+    UserEntity disableUser(Long userId);
+   // User updateUser(User user, String userId);
+    //User disableUser(String userId);
+    UserEntity findUserByEmail(String email);
+
 }

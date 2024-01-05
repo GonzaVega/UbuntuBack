@@ -39,4 +39,5 @@ public interface MicroentrepreneurshipRepository extends JpaRepository<Microentr
     // Obtener microemprendimientos por categoría
     @Query("SELECT m FROM Microentrepreneurship m WHERE m.category.id = :id")
     List<Microentrepreneurship> findMicroentrepreneurshipsByCategory(@Param("id") Long id);
+
 }

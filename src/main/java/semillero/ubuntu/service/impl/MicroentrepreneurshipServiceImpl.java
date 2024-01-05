@@ -3,67 +3,147 @@ package semillero.ubuntu.service.impl;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import semillero.ubuntu.dto.MicroentrepreneurshipDto;
-import semillero.ubuntu.entities.Image;
+import semillero.ubuntu.entities.Category;
 import semillero.ubuntu.entities.Microentrepreneurship;
 import semillero.ubuntu.exception.CloudinaryException;
 import semillero.ubuntu.mapper.MicroentrepreneurshipMapper;
-import semillero.ubuntu.repository.ImageRepository;
 import semillero.ubuntu.repository.MicroentrepreneurshipRepository;
 import semillero.ubuntu.service.contract.MicroentrepreneurshipService;
+import semillero.ubuntu.utils.FileValidator;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipService {
 
     // Inyección de dependencias a través del constructor
-    private final MicroentrepreneurshipRepository microentrepreneurshipRepository;
-    private final ImageRepository imageRepository;
-    private final MicroentrepreneurshipMapper microentrepreneurshipMapper;
+    @Autowired
+    private semillero.ubuntu.repository.UserRepository UserRepository;
 
-    public MicroentrepreneurshipServiceImpl(MicroentrepreneurshipRepository microentrepreneurshipRepository, ImageRepository imageRepository, MicroentrepreneurshipMapper microentrepreneurshipMapper) {
+    @Autowired
+    private MicroentrepreneurshipMapper microentrepreneurshipMapper;
+
+    @Autowired
+    private FileUploadImpl fileUploadService;
+
+    @Autowired
+    private FileValidator fileValidator;
+
+    private final MicroentrepreneurshipRepository microentrepreneurshipRepository;
+
+    public MicroentrepreneurshipServiceImpl(MicroentrepreneurshipRepository microentrepreneurshipRepository) {
         this.microentrepreneurshipRepository = microentrepreneurshipRepository;
-        this.imageRepository = imageRepository;
-        this.microentrepreneurshipMapper = microentrepreneurshipMapper;
     }
 
+    // Este método del servicio está anotado con @Transactional, lo que significa que se ejecutará dentro de una transacción gestionada por Spring. Al cargar Microentrepreneurship dentro de este método, la colección images debería cargarse sin lanzar la excepción LazyInitializationException.
+    @Transactional
+    @Override
+    public List<MicroentrepreneurshipDto> findMicroentrepreneurshipsByCategory(Long idCategory) {
+        // Retorna microemprendimientos por coincidencia de categoria
+        List<Microentrepreneurship> microentrepreneurships = microentrepreneurshipRepository.findMicroentrepreneurshipsByCategory(idCategory);
+
+        // Accede a la colección images de cada microemprendimiento para forzar la carga perezosa
+        for (Microentrepreneurship microentrepreneurship : microentrepreneurships) {
+            microentrepreneurship.getImages().size();  // Esto forzará la carga de la colección images
+        }
+
+        // Convierte la lista de entidades a DTO antes de retornarla
+        return microentrepreneurshipMapper.entityListToDtoList(microentrepreneurships);
+    }
 
     @Override
-    public MicroentrepreneurshipDto createMicroentrepreneurship(Microentrepreneurship microentrepreneurship) {
-        Microentrepreneurship savedMicroentrepreneurship = microentrepreneurshipRepository.save(microentrepreneurship);
-        return microentrepreneurshipMapper.entityToDto(savedMicroentrepreneurship);
+    public ResponseEntity<?> createMicroentrepreneurship(MicroentrepreneurshipDto microentrepreneurshipDto){
+
+        //mapea dto a entidad
+        Microentrepreneurship microentrepreneurship = microentrepreneurshipMapper.mapToEntity(microentrepreneurshipDto);
+
+        try {
+            //convert array multipart to list of images multipart
+            List<MultipartFile> multipartImages = List.of(microentrepreneurshipDto.getMultipartImages());
+//            for(MultipartFile file : multipartImages){
+//                System.out.println(file.getBytes());
+//            }
+
+            //validate images
+            try {
+                ResponseEntity<?> fileValidationResponse = fileValidator.validateFiles(multipartImages);
+                if (!fileValidationResponse.getStatusCode().is2xxSuccessful()) {
+                    return fileValidationResponse;
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            microentrepreneurship.setImages(fileUploadService.uploadImage(microentrepreneurshipDto.getMultipartImages()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Persistir la entidad
+        microentrepreneurshipRepository.save(microentrepreneurship);
+        return ResponseEntity.ok(microentrepreneurship);
     }
 
-   @Override
-    public MicroentrepreneurshipDto editMicroentrepreneurship(Long id, Microentrepreneurship microentrepreneurship) {
+    @Override
+    public ResponseEntity<?> editMicroentrepreneurship(Long id, MicroentrepreneurshipDto microentrepreneurshipDto) {
+        // Verificar si el microemprendimiento existe
+        Optional<Microentrepreneurship> existingMicroentrepreneurshipOptional = microentrepreneurshipRepository.findById(id);
 
-        // Verifica si el microemprendimiento existe
-        Microentrepreneurship existingMicroentrepreneurship = microentrepreneurshipRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Microemprendimiento no encontrado con ID: " + id));
+        if (existingMicroentrepreneurshipOptional.isPresent()) {
+            //setear los que viene del dto a existingMicroentrepreneurship
+            Microentrepreneurship existingMicroentrepreneurship = existingMicroentrepreneurshipOptional.get();
+            existingMicroentrepreneurship.setName(microentrepreneurshipDto.getName());
+            existingMicroentrepreneurship.setCountry(microentrepreneurshipDto.getCountry());
+            existingMicroentrepreneurship.setProvince(microentrepreneurshipDto.getProvince());
+            existingMicroentrepreneurship.setCity(microentrepreneurshipDto.getCity());
 
-        // Actualiza los datos del microemprendimiento existente con los nuevos datos
-        existingMicroentrepreneurship.setName(microentrepreneurship.getName());
-        existingMicroentrepreneurship.setCountry(microentrepreneurship.getCountry());
-        existingMicroentrepreneurship.setProvince(microentrepreneurship.getProvince());
-        existingMicroentrepreneurship.setCity(microentrepreneurship.getCity());
-        existingMicroentrepreneurship.setCategory(microentrepreneurship.getCategory());
-        existingMicroentrepreneurship.setSubCategory(microentrepreneurship.getSubCategory());
-        existingMicroentrepreneurship.setImages(microentrepreneurship.getImages());
-        existingMicroentrepreneurship.setDescription(microentrepreneurship.getDescription());
-        existingMicroentrepreneurship.setMoreInfo(microentrepreneurship.getMoreInfo());
-        existingMicroentrepreneurship.setImages(microentrepreneurship.getImages());
+            //paso la categoría de dto a entidad de categoria
+            Category category = new Category();
+            category.setName(microentrepreneurshipDto.getCategory().getName());
+            category.setId(microentrepreneurshipDto.getCategory().getId());
+            existingMicroentrepreneurship.setCategory(category);
 
-        // Guarda la entidad actualizada
-        Microentrepreneurship updatedMicroentrepreneurship = microentrepreneurshipRepository.save(existingMicroentrepreneurship);
+            existingMicroentrepreneurship.setSubCategory(microentrepreneurshipDto.getSubCategory());
+            existingMicroentrepreneurship.setDescription(microentrepreneurshipDto.getDescription());
+            existingMicroentrepreneurship.setMoreInfo(microentrepreneurshipDto.getMoreInfo());
+            existingMicroentrepreneurship.setImages(microentrepreneurshipDto.getImages());
 
-        // Convierte la entidad a DTO antes de retornarla
-        return microentrepreneurshipMapper.entityToDto(updatedMicroentrepreneurship);
+            try {
+                // Convertir array de imágenes multipart a lista de imágenes multipart
+                List<MultipartFile> multipartImages = List.of(microentrepreneurshipDto.getMultipartImages());
+
+                // Validar imágenes
+                try {
+                    ResponseEntity<?> fileValidationResponse = fileValidator.validateFiles(multipartImages);
+                    if (!fileValidationResponse.getStatusCode().is2xxSuccessful()) {
+                        return fileValidationResponse;
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+                // Actualizar imágenes en la entidad
+                existingMicroentrepreneurship.setImages(fileUploadService.uploadImage(microentrepreneurshipDto.getMultipartImages()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            // Persistir la entidad actualizada
+            microentrepreneurshipRepository.save(existingMicroentrepreneurship);
+            return ResponseEntity.ok(existingMicroentrepreneurship);
+        } else {
+            return ResponseEntity.badRequest().body("El microemprendimiento no existe");
+        }
     }
 
 
@@ -93,23 +173,26 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         microentrepreneurshipRepository.save(microentrepreneurship);
     }
 
+    // Obtener el microemprendimiento por su id
     @Override
-    public MicroentrepreneurshipDto getMicroentrepreneurshipById(Long id) {
+    public ResponseEntity<Object> getMicroentrepreneurshipById(Long id) {
         // Verifica si el microemprendimiento existe
-        Microentrepreneurship microentrepreneurship = microentrepreneurshipRepository.findByIdWithImages(id)
-                .orElseThrow(() -> new EntityNotFoundException("El microemprendimiento no existe"));
+        Optional<Microentrepreneurship> microentrepreneurship = microentrepreneurshipRepository.findById(id);
 
-        // Convierte la entidad a DTO antes de retornarla
-        return microentrepreneurshipMapper.entityToDto(microentrepreneurship);
+        if (microentrepreneurship.isPresent()) {
+            Microentrepreneurship microentrepreneurshipEntity = microentrepreneurship.get();
+            MicroentrepreneurshipDto microentrepreneurshipDto = microentrepreneurshipMapper.mapEntityToDto(microentrepreneurshipEntity);
+
+            return ResponseEntity.ok(microentrepreneurshipDto);
+        } else {
+            return ResponseEntity.badRequest().body("El microemprendimiento no existe");
+        }
     }
 
     @Override
-    public List<MicroentrepreneurshipDto> getAllMicroentrepreneurships() {
+    public List<Microentrepreneurship> getAllMicroentrepreneurships() {
         // Retorna todos los microemprendimientos
-        List<Microentrepreneurship> microentrepreneurships = microentrepreneurshipRepository.findAllMicroentrepreneurshipsActive();
-
-        // Convierte la lista de entidades a DTO antes de retornarla
-        return microentrepreneurshipMapper.entityListToDtoList(microentrepreneurships);
+        return microentrepreneurshipRepository.findAllMicroentrepreneurshipsActive();
     }
 
     @Override
@@ -137,91 +220,41 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
     }
 
     @Override
-    public List<MicroentrepreneurshipDto> findMicroentrepreneurshipsByName(String name) {
+    public List<Microentrepreneurship> findMicroentrepreneurshipsByName(String name) {
         // Retorna microemprendimientos por coincidencia de nombre
-        List<Microentrepreneurship> microentrepreneurships = microentrepreneurshipRepository.findMicroentrepreneurshipsByName(name);
-
-        // Convierte la lista de entidades a DTO antes de retornarla
-        return microentrepreneurshipMapper.entityListToDtoList(microentrepreneurships);
+        return microentrepreneurshipRepository.findMicroentrepreneurshipsByName(name);
     }
+    
 
-    @Override
-    public List<String> UrlImg(List<MultipartFile> files ) {
-        List<String> imageUrls = new ArrayList<>();
-
-        for (MultipartFile file : files) {
-            String imageUrl = uploadImage(file);
-            imageUrls.add(imageUrl);
-        }
-
-        return imageUrls;
-    }
-
-    // Este método del servicio está anotado con @Transactional, lo que significa que se ejecutará dentro de una transacción gestionada por Spring. Al cargar Microentrepreneurship dentro de este método, la colección images debería cargarse sin lanzar la excepción LazyInitializationException.
-    @Transactional
-    @Override
-    public List<MicroentrepreneurshipDto> findMicroentrepreneurshipsByCategory(Long idCategory) {
-        // Retorna microemprendimientos por coincidencia de categoria
-        List<Microentrepreneurship> microentrepreneurships = microentrepreneurshipRepository.findMicroentrepreneurshipsByCategory(idCategory);
-
-        // Accede a la colección images de cada microemprendimiento para forzar la carga perezosa
-        for (Microentrepreneurship microentrepreneurship : microentrepreneurships) {
-            microentrepreneurship.getImages().size();  // Esto forzará la carga de la colección images
-        }
-
-        // Convierte la lista de entidades a DTO antes de retornarla
-        return microentrepreneurshipMapper.entityListToDtoList(microentrepreneurships);
-    }
-
-    // Este metodo se encarga de subir la imagen a  cloudinary y retorna la url de la imagen
-    @Override
-    public String uploadImage(MultipartFile file) {
-
-        // datos de la cuenta de cloudinary
-        Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", "dkzspm2fj",
-                "api_key", "229982374928582",
-                "api_secret", "ZM54qomggmRWESmK2QQgui7_WPo"));
-
-        try {
-            Map<?, ?> uploadResult= cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-            String imageUrl = (String) uploadResult.get("secure_url");
-            return imageUrl;
-        } catch (Exception e) {
-            throw new CloudinaryException("Error al subir la imagen");
-        }
-
-    }
-
-    @Override
-    public boolean deleteImageFromCloudinary(Image image) {
-        try {
-
-            // datos de la cuenta de cloudinary
-            Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-                    "cloud_name", "dkzspm2fj",
-                    "api_key", "229982374928582",
-                    "api_secret", "ZM54qomggmRWESmK2QQgui7_WPo"));
-
-
-            // Extraer el identificador de la imagen de la URL
-            String publicId = image.getUrl().substring(image.getUrl().lastIndexOf('/') + 1, image.getUrl().lastIndexOf('.'));
-
-            // Eliminar la imagen de Cloudinary
-            Map result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-
-            // Si el resultado es "ok", la eliminación fue exitosa
-            return result.get("result").equals("ok");
-        } catch (Exception e) {
-            // Si ocurre una excepción, la eliminación no fue exitosa
-            return false;
-        }
-    }
-
-    @Override
-    public void deleteImageFromDatabase(Image image) {
-        imageRepository.delete(image);
-    }
+//    @Override
+//    public boolean deleteImageFromCloudinary(Image image) {
+//        try {
+//
+//            // datos de la cuenta de cloudinary
+//            Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
+//                    "cloud_name", "dkzspm2fj",
+//                    "api_key", "229982374928582",
+//                    "api_secret", "ZM54qomggmRWESmK2QQgui7_WPo"));
+//
+//
+//            // Extraer el identificador de la imagen de la URL
+//            String publicId = image.getUrl().substring(image.getUrl().lastIndexOf('/') + 1, image.getUrl().lastIndexOf('.'));
+//
+//            // Eliminar la imagen de Cloudinary
+//            Map result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+//
+//            // Si el resultado es "ok", la eliminación fue exitosa
+//            return result.get("result").equals("ok");
+//        } catch (Exception e) {
+//            // Si ocurre una excepción, la eliminación no fue exitosa
+//            return false;
+//        }
+//    }
+//
+//    @Override
+//    public void deleteImageFromDatabase(Image image) {
+//        imageRepository.delete(image);
+//    }
 
 
 }

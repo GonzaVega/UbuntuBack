@@ -45,11 +45,22 @@ public class DataInitializer implements ApplicationRunner {
         category4.setName("Empresas/Organismos de impacto/Economía circular");
         categories.put(category4.getName(), category4);
 
-        // Guarda las categorías en la base de datos
         for (Category category : categories.values()) {
-            // Si la categoría no existe, la crea
-            if (categoryService.getCategoryByName(category.getName()) == null) {
-                categoryService.createCategory(category);
+            // Verifica si la categoría ya existe en la base de datos tanto con / como con -
+            Category existingCategory = categoryService.getCategoryByName(category.getName());
+
+            if (existingCategory != null) {
+                // Si existe y tiene el caracter "/", lo reemplaza por " - " se hace de esta forma
+                // porque ya se había desplegado el back con su dump de base de datos
+//                if (existingCategory.getName().contains("/")) {
+//                    // Actualiza la categoría existente con el nuevo formato
+//                    categoryService.createFormattedCategory(existingCategory);
+//                }
+                categoryService.createFormattedCategory(existingCategory);
+            } else {
+                // si no existe, puede ser que aún no se ha creado o ya se actualizó al nuevo formato
+                // por lo que debemos averiguar si existe pero con el nuevo formato
+                categoryService.createFormattedCategory(category);
             }
         }
     }
