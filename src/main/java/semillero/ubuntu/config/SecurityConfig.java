@@ -9,6 +9,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import semillero.ubuntu.utils.filters.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -31,26 +34,34 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    RequestMatcher adminUrls = new OrRequestMatcher(
+            Arrays.asList(
+                    new AntPathRequestMatcher("/api/v1/publication/**"),
+                    new AntPathRequestMatcher("/api/v1/category/**"),
+                    new AntPathRequestMatcher("/api/v1/microentrepreneurship/**")
+            )
+    );
+
+    RequestMatcher publicUrls = new OrRequestMatcher(
+            new AntPathRequestMatcher("/auth/**"),
+            new AntPathRequestMatcher("/api/v1/geo/**"),
+            new AntPathRequestMatcher("/api/v1/message/**"),
+            new AntPathRequestMatcher("/api/v1/publication/**","GET"),
+            new AntPathRequestMatcher("/api/v1/category/**","GET"),
+            new AntPathRequestMatcher("/api/v1/microentrepreneurship/**","GET")
+            );
+
+
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
          http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/category/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/geo/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/message/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/microentrepreneurship/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/publication/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/v1/microentrepreneurship/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/v1/publication/**").authenticated()
-                        .requestMatchers(HttpMethod.POST,"/api/v1/category/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/v1/message/**").permitAll()
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user").hasAnyRole("USER","ADMIN")
-                        .anyRequest().permitAll()
+                                .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                                .requestMatchers(publicUrls).permitAll()
+                                .requestMatchers(adminUrls).hasAuthority("ADMIN")
+                        //.anyRequest().authenticated()
                 )
                 .cors(cors -> cors
                         .configurationSource(corsConfigurationSource())
