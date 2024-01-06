@@ -68,11 +68,7 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         Microentrepreneurship microentrepreneurship = microentrepreneurshipMapper.mapToEntity(microentrepreneurshipDto);
 
         try {
-            //convert array multipart to list of images multipart
             List<MultipartFile> multipartImages = List.of(microentrepreneurshipDto.getMultipartImages());
-//            for(MultipartFile file : multipartImages){
-//                System.out.println(file.getBytes());
-//            }
 
             //validate images
             try {
@@ -84,7 +80,7 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
                 throw new RuntimeException(e);
             }
 
-            microentrepreneurship.setImages(fileUploadService.uploadImage(microentrepreneurshipDto.getMultipartImages()));
+            microentrepreneurship.setImages(fileUploadService.uploadImage(multipartImages));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -116,24 +112,31 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
             existingMicroentrepreneurship.setSubCategory(microentrepreneurshipDto.getSubCategory());
             existingMicroentrepreneurship.setDescription(microentrepreneurshipDto.getDescription());
             existingMicroentrepreneurship.setMoreInfo(microentrepreneurshipDto.getMoreInfo());
-            existingMicroentrepreneurship.setImages(microentrepreneurshipDto.getImages());
 
             try {
-                // Convertir array de imágenes multipart a lista de imágenes multipart
-                List<MultipartFile> multipartImages = List.of(microentrepreneurshipDto.getMultipartImages());
+                List<MultipartFile> newImages = List.of(microentrepreneurshipDto.getMultipartImages());
+                List<String> existingImages = existingMicroentrepreneurship.getImages();
 
-                // Validar imágenes
-                try {
-                    ResponseEntity<?> fileValidationResponse = fileValidator.validateFiles(multipartImages);
-                    if (!fileValidationResponse.getStatusCode().is2xxSuccessful()) {
-                        return fileValidationResponse;
+                if (!newImages.isEmpty() && !newImages.get(0).isEmpty()) {
+                    //todo: verificar si son imagenes nuevas
+                    try {
+                        ResponseEntity<?> fileValidationResponse = fileValidator.validateFiles(newImages);
+                        if (!fileValidationResponse.getStatusCode().is2xxSuccessful()) {
+                            return fileValidationResponse;
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+
+                    if(existingImages != null){
+                        existingMicroentrepreneurship.setImages(fileUploadService.updateImage(existingImages, newImages));
+                    }else{
+                        existingMicroentrepreneurship.setImages(fileUploadService.uploadImage(newImages));
+                    }
+                }else{
+                    existingMicroentrepreneurship.setImages(existingImages);
                 }
 
-                // Actualizar imágenes en la entidad
-                existingMicroentrepreneurship.setImages(fileUploadService.uploadImage(microentrepreneurshipDto.getMultipartImages()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
