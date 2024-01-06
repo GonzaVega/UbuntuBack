@@ -21,6 +21,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("${api.url}/microentrepreneurship")
+@CrossOrigin(origins= "http://localhost:5173")
 public class MicroentrepreneurshipController {
     private final MicroentrepreneurshipService microentrepreneurshipService;
     private final CategoryService categoryService;

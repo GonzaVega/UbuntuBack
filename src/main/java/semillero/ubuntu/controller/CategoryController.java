@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("${api.url}/category")
+@CrossOrigin(origins= "http://localhost:5173")
 public class CategoryController {
 
     // Inyección de dependencias a través del constructor
