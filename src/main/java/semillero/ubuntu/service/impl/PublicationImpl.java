@@ -52,22 +52,14 @@ public class PublicationImpl implements PublicationService {
         // Mapear DTO a entidad
         Publication publication = publicationMapper.mapDtoToEntity(publicationDTO);
 
-        //List<String> processedImages = processImages(publicationDTO.getImages());
         publication.setUser(currentUser.get());
 
-        // Asignar las imágenes procesadas a la entidad
-        // first validate the images and then add them to the publication
-
         try {
-            //convert array multipart to list of images multipart
-            List<MultipartFile> multipartImages = List.of(publicationDTO.getMultipartImages());
-            for(MultipartFile file : multipartImages){
-                System.out.println(file.getBytes());
-            }
+            List<MultipartFile> newImages = List.of(publicationDTO.getMultipartImages());                               //convert array multipart to list of images multipart
 
             //validate images
             try {
-                ResponseEntity<?> fileValidationResponse = fileValidator.validateFiles(multipartImages);
+                ResponseEntity<?> fileValidationResponse = fileValidator.validateFiles(newImages);
                 if (!fileValidationResponse.getStatusCode().is2xxSuccessful()) {
                     return fileValidationResponse;
                 }
@@ -75,7 +67,7 @@ public class PublicationImpl implements PublicationService {
                 throw new RuntimeException(e);
             }
 
-            publication.setImages(fileUploadService.uploadImage(publicationDTO.getMultipartImages()));
+            publication.setImages(fileUploadService.uploadImage(newImages));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -90,12 +82,10 @@ public class PublicationImpl implements PublicationService {
     @Override
     public ResponseEntity<?> updatePublication(PublicationDto publicationDTO, Long id, Authentication authentication){
 
-        // Obtener el usuario logueado
-        String username  = authentication.getName();
+        String username  = authentication.getName();                                                                    // usuario logueado
         Optional<UserEntity> currentUser = UserRepository.findByEmail(username);
 
-        // Obtener la publicación a actualizar
-        Optional<Publication> publicationToUpdate = publicationRepository.findById(id);
+        Optional<Publication> publicationToUpdate = publicationRepository.findById(id);                                 // publicación a actualizar
 
         // Verificar que la publicación exista
         if (publicationToUpdate.isEmpty()) {
@@ -106,27 +96,35 @@ public class PublicationImpl implements PublicationService {
         Publication publicationEntity = publicationToUpdate.get();
         publicationEntity.setTitle(publicationDTO.getTitle());
         publicationEntity.setDescription(publicationDTO.getDescription());
-        //Si otro usuario administrador cambia la publicación, actualizamos el usuario
-        publicationEntity.setUser(currentUser.get());
+        publicationEntity.setUser(currentUser.get());                                                                   //Si otro usuario administrador cambia la publicación, actualizamos el usuario
 
         try {
-            //convert array multipart to list of images multipart
-            List<MultipartFile> multipartImages = List.of(publicationDTO.getMultipartImages());
-            for(MultipartFile file : multipartImages){
-                System.out.println(file.getBytes());
-            }
+            List<MultipartFile> newImages = List.of(publicationDTO.getMultipartImages());
+            List<String> existingImages = publicationToUpdate.get().getImages();
 
-            //validate images
-            try {
-                ResponseEntity<?> fileValidationResponse = fileValidator.validateFiles(multipartImages);
-                if (!fileValidationResponse.getStatusCode().is2xxSuccessful()) {
-                    return fileValidationResponse;
+            if (!newImages.isEmpty() && !newImages.get(0).isEmpty()){                                                    // si manda imágenes, mira si son diferentes, las valida, actualiza y elimina de cloudinary las que se cambiaron
+                //todo: verificar si son imagenes nuevas
+                try {
+                    ResponseEntity<?> fileValidationResponse = fileValidator.validateFiles(newImages);                  //validate images
+                    if (!fileValidationResponse.getStatusCode().is2xxSuccessful()) {
+                        return fileValidationResponse;
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+
+                publicationEntity.setImages(fileUploadService.updateImage(existingImages,newImages));
+
+                if(existingImages != null){
+                    fileUploadService.updateImage(existingImages,newImages);
+                }else{
+                    fileUploadService.uploadImage(newImages);
+                }
+
+            }else{ // si no manda imágenes, se mantienen las actuales
+                publicationEntity.setImages(existingImages);
             }
 
-            publicationEntity.setImages(fileUploadService.updateImage(publicationToUpdate.get().getImages(),publicationDTO.getMultipartImages()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

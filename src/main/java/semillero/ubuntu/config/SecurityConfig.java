@@ -38,17 +38,24 @@ public class SecurityConfig {
             Arrays.asList(
                     new AntPathRequestMatcher("/api/v1/publication/**"),
                     new AntPathRequestMatcher("/api/v1/category/**"),
-                    new AntPathRequestMatcher("/api/v1/microentrepreneurship/**")
+                    new AntPathRequestMatcher("/api/v1/microentrepreneurship/**"),
+                    new AntPathRequestMatcher("/api/v1/message/**")
             )
     );
 
     RequestMatcher publicUrls = new OrRequestMatcher(
             new AntPathRequestMatcher("/auth/**"),
             new AntPathRequestMatcher("/api/v1/geo/**"),
-            new AntPathRequestMatcher("/api/v1/message/**"),
-            new AntPathRequestMatcher("/api/v1/publication/**","GET"),
+            new AntPathRequestMatcher("/api/v1/message/**","POST"),
+            new AntPathRequestMatcher("/api/v1/publication/activas","GET"),
+            new AntPathRequestMatcher("/api/v1/publication/{id}","GET"),
+            new AntPathRequestMatcher("/api/v1/publication/ultimas10","GET"),
             new AntPathRequestMatcher("/api/v1/category/**","GET"),
-            new AntPathRequestMatcher("/api/v1/microentrepreneurship/**","GET")
+            new AntPathRequestMatcher("/api/v1/microentrepreneurship/all","GET"),
+            new AntPathRequestMatcher("/api/v1/microentrepreneurship/{id}","GET"),
+            new AntPathRequestMatcher("/api/v1/microentrepreneurship/find/**","GET"),
+            new AntPathRequestMatcher("/api/v1/microentrepreneurship/find/category/**","GET"),
+            new AntPathRequestMatcher("/api/v1/microentrepreneurship/count/categories","GET")
             );
 
 
@@ -61,7 +68,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
                                 .requestMatchers(publicUrls).permitAll()
                                 .requestMatchers(adminUrls).hasAuthority("ADMIN")
-                        //.anyRequest().authenticated()
+                        .anyRequest().authenticated()
                 )
                 .cors(cors -> cors
                         .configurationSource(corsConfigurationSource())

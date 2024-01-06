@@ -20,7 +20,8 @@ public class FileUploadImpl implements FileUploadService {
 
     private final CloudinaryConfig cloudinaryConfig;
 
-    List<String> saveImage(MultipartFile[] multipartFile) throws IOException {
+    @Override
+    public List<String> saveImage(List<MultipartFile> multipartFiles) throws IOException {
         List<String> listImageName = new ArrayList<>();
         Cloudinary cloudinary = cloudinaryConfig.configuration();
         Map<String, Object> params = ObjectUtils.asMap(
@@ -30,7 +31,7 @@ public class FileUploadImpl implements FileUploadService {
                 "overwrite", false
         );
 
-        for (MultipartFile image: multipartFile) {
+        for (MultipartFile image : multipartFiles) {
             Map<?, ?> uploadResult = cloudinary.uploader().upload(image.getBytes(), params);
             String imageUrl = uploadResult.get("url").toString();
             listImageName.add(imageUrl);
@@ -39,21 +40,21 @@ public class FileUploadImpl implements FileUploadService {
     }
 
     @Override
-    public List<String> uploadImage(MultipartFile[] multipartFile) throws IOException {
-        return saveImage(multipartFile);
+    public List<String> uploadImage(List<MultipartFile> multipartFiles) throws IOException {
+        return saveImage(multipartFiles);
     }
 
 
     //TODO: verificar si las imagenes son iguales
     @Override
-    public List<String> updateImage(List<String> images, MultipartFile[] newImages) throws IOException {
+    public List<String> updateImage(List<String> existingImages, List<MultipartFile> newImages) throws IOException {
         Cloudinary cloudinary = cloudinaryConfig.configuration();
 
         //Elimina las imagenes anteriores
-        if (images.size() > 0) {
+        if (existingImages.size() > 0) {
             Map<String, Object> destroyParams = ObjectUtils.asMap("folder", "ubuntu");
 
-            for (String image : images) {
+            for (String image : existingImages) {
                 destroyParams.put("public_id", image);
                     cloudinary.uploader().destroy(image, destroyParams);
             }
