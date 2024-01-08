@@ -11,6 +11,8 @@ import semillero.ubuntu.entities.UserEntity;
 import semillero.ubuntu.repository.UserRepository;
 import semillero.ubuntu.service.contract.UserService;
 
+import java.util.List;
+
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -87,5 +89,11 @@ public class UserServiceImpl implements UserService {
                 "",
                 user.getAuthorities()
         );
+    }
+
+    //devolver todos los correos de los usuarios administradores
+    @Override
+    public List<String> getAllAdminEmails(){
+        return userRepository.getAllAdminEmails();
     }
 }

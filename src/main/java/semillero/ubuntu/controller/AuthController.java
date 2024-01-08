@@ -38,6 +38,8 @@ public class AuthController {
             //obtenemos el googleTokenId de google
             String googleTokenId = payload.get("tokenId");
 
+            System.out.println("pasó");
+
             //comprobamos que tenga un valor
             if(googleTokenId == null || googleTokenId.isEmpty()){
                 throw new Exception("No se ha proporcionado un token");
@@ -98,5 +100,14 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{\"error\": \"Token inválido.\"}");
         }
     }
-    
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        try {
+            SecurityContextHolder.clearContext();
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": \"Error al cerrar sesión.\"}");
+        }
+    }
 }

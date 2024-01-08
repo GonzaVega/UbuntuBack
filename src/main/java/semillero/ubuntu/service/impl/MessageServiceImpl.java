@@ -8,12 +8,15 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import semillero.ubuntu.entities.Message;
 import semillero.ubuntu.entities.Microentrepreneurship;
+import semillero.ubuntu.entities.UserEntity;
 import semillero.ubuntu.enums.Management;
 import semillero.ubuntu.repository.MessageRepository;
 import semillero.ubuntu.repository.MicroentrepreneurshipRepository;
 import semillero.ubuntu.service.contract.MessageService;
+import semillero.ubuntu.service.impl.EmailSender;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -26,6 +29,12 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private MicroentrepreneurshipRepository microentrepreneurshipRepository;
 
+    @Autowired
+    private EmailSender emailService;
+
+    @Autowired
+    private UserServiceImpl userService;
+
     @Override
     public Message saveMessage(Long microentrepreneurshipId, Message message) {
         logger.info("Save Message");
@@ -36,6 +45,21 @@ public class MessageServiceImpl implements MessageService {
 
         // Asocia el mensaje con el microemprendimiento
         message.setMicroentrepreneurship(microentrepreneurship);
+
+
+        // Envia un correo electrónico a todos los usuarios con el rol "admin"
+        List<String> adminUsers = userService.getAllAdminEmails();
+
+        String fullName = message.getFullName();
+        String microentrepreneurshipName = message.getMicroentrepreneurship().getName();
+        String messageContent = "El inversionista " + fullName + " quiere invertir en el microemprendimiento: " +
+                microentrepreneurshipName + ".\n\n" + "Mensaje: " + message.getMessage();
+
+        for (String adminEmail : adminUsers) {
+            //emailService.sendEmail(adminEmail, "Contacto inversionista", messageContent);
+            System.out.println("Email enviado a: " + adminEmail);
+        }
+        emailService.sendEmail("nodoycorreos@gmail.com", "Contacto inversionista", messageContent);
 
         // Guarda el mensaje
         return messageRepository.save(message);
