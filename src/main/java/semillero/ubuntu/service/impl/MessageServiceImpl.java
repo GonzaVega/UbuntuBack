@@ -59,7 +59,7 @@ public class MessageServiceImpl implements MessageService {
             //emailService.sendEmail(adminEmail, "Contacto inversionista", messageContent);
             System.out.println("Email enviado a: " + adminEmail);
         }
-        emailService.sendEmail("nodoycorreos@gmail.com", "Contacto inversionista", messageContent);
+        //emailService.sendEmail("nodoycorreos@gmail.com", "Contacto inversionista", messageContent);
 
         // Guarda el mensaje
         return messageRepository.save(message);
