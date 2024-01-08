@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +45,7 @@ public class MessageController {
             Message message = messageService.saveMessage(microentrepreneurshipId, newMessage);
             response.put("message", "Mensaje creado con éxito.");
             response.put("created", message);
+
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception e) {
             response.put("error", e.getMessage());

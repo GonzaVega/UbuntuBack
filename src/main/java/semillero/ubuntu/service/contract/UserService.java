@@ -3,6 +3,8 @@ package semillero.ubuntu.service.contract;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import semillero.ubuntu.entities.UserEntity;
 
+import java.util.List;
+
 public interface UserService extends UserDetailsService {
 
     UserEntity saveUser(UserEntity user);
@@ -12,4 +14,6 @@ public interface UserService extends UserDetailsService {
     //User disableUser(String userId);
     UserEntity findUserByEmail(String email);
 
+    //devolver todos los correos de los usuarios administradores
+    List<String> getAllAdminEmails();
 }

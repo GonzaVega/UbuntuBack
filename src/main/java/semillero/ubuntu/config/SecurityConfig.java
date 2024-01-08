@@ -44,7 +44,7 @@ public class SecurityConfig {
     );
 
     RequestMatcher publicUrls = new OrRequestMatcher(
-            new AntPathRequestMatcher("/auth/**"),
+            new AntPathRequestMatcher("/api/v1/auth/**"),
             new AntPathRequestMatcher("/api/v1/geo/**"),
             new AntPathRequestMatcher("/api/v1/message/**","POST"),
             new AntPathRequestMatcher("/api/v1/publication/activas","GET"),
