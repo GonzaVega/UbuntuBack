@@ -58,7 +58,8 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         }
 
         // Convierte la lista de entidades a DTO antes de retornarla
-        return microentrepreneurshipMapper.entityListToDtoList(microentrepreneurships);
+        List<MicroentrepreneurshipDto> microentrepreneurshipDtos = microentrepreneurshipMapper.entityListToDtoList(microentrepreneurships);
+        return microentrepreneurshipDtos;
     }
 
     @Override
@@ -227,38 +228,6 @@ public class MicroentrepreneurshipServiceImpl implements MicroentrepreneurshipSe
         // Retorna microemprendimientos por coincidencia de nombre
         return microentrepreneurshipRepository.findMicroentrepreneurshipsByName(name);
     }
-    
-
-//    @Override
-//    public boolean deleteImageFromCloudinary(Image image) {
-//        try {
-//
-//            // datos de la cuenta de cloudinary
-//            Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
-//                    "cloud_name", "dkzspm2fj",
-//                    "api_key", "229982374928582",
-//                    "api_secret", "ZM54qomggmRWESmK2QQgui7_WPo"));
-//
-//
-//            // Extraer el identificador de la imagen de la URL
-//            String publicId = image.getUrl().substring(image.getUrl().lastIndexOf('/') + 1, image.getUrl().lastIndexOf('.'));
-//
-//            // Eliminar la imagen de Cloudinary
-//            Map result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-//
-//            // Si el resultado es "ok", la eliminación fue exitosa
-//            return result.get("result").equals("ok");
-//        } catch (Exception e) {
-//            // Si ocurre una excepción, la eliminación no fue exitosa
-//            return false;
-//        }
-//    }
-//
-//    @Override
-//    public void deleteImageFromDatabase(Image image) {
-//        imageRepository.delete(image);
-//    }
-
 
 }
 
