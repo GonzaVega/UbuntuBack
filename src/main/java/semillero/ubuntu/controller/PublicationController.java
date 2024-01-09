@@ -83,4 +83,10 @@ public class PublicationController {
     public List<Publication> getLatest10Posts(){
         return publicationService.getLast10Posts();
     }
+
+    //cambiar status de publicacion
+    @PutMapping("/change-status/{id}")
+    public void changePublicationStatus(@PathVariable Long id) {
+        publicationService.changePublicationStatus(id);
+    }
 }
