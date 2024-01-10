@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -36,10 +37,10 @@ public class SecurityConfig {
 
     RequestMatcher adminUrls = new OrRequestMatcher(
             Arrays.asList(
-                    new AntPathRequestMatcher("/api/v1/publication/**"),
                     new AntPathRequestMatcher("/api/v1/category/**"),
                     new AntPathRequestMatcher("/api/v1/microentrepreneurship/**"),
-                    new AntPathRequestMatcher("/api/v1/message/**")
+                    new AntPathRequestMatcher("/api/v1/message/**"),
+                    new AntPathRequestMatcher("/api/v1/publication/**")
             )
     );
 
@@ -68,7 +69,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
                                 .requestMatchers(publicUrls).permitAll()
                                 .requestMatchers(adminUrls).hasAuthority("ADMIN")
-                        .anyRequest().authenticated()
+
                 )
                 .cors(cors -> cors
                         .configurationSource(corsConfigurationSource())

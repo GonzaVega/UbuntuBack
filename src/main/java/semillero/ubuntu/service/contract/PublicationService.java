@@ -10,10 +10,9 @@ import java.util.List;
 @Service
 public interface PublicationService {
     //Publication createPublication(Publication publication);
-    ResponseEntity<?> createPublication(PublicationDto publicationDTO, Authentication authentication);
+    ResponseEntity<?> createPublication(PublicationDto publicationDTO);
     ResponseEntity<?> updatePublication(PublicationDto publicationDTO, Long id, Authentication authentication);
     ResponseEntity<Object> getPublication(Long id);
-
     List<Publication> getAllPublication();
     void increaseViews(Long id);
     void changePublicationStatus(Long id);
