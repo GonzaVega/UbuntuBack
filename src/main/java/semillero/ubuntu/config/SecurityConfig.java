@@ -66,8 +66,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
+
                                 .requestMatchers(publicUrls).permitAll()
-                                .requestMatchers(adminUrls).hasAuthority("ADMIN")
+                               .requestMatchers(adminUrls).hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors
