@@ -56,19 +56,19 @@ public class SecurityConfig {
             new AntPathRequestMatcher("/api/v1/microentrepreneurship/find/**","GET"),
             new AntPathRequestMatcher("/api/v1/microentrepreneurship/find/category/**","GET"),
             new AntPathRequestMatcher("/api/v1/microentrepreneurship/count/categories","GET")
-            );
+    );
 
 
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-         http
+        http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS).permitAll()
 
-                                .requestMatchers(publicUrls).permitAll()
-                               .requestMatchers(adminUrls).hasAuthority("ADMIN")
+                        .requestMatchers(publicUrls).permitAll()
+                        .requestMatchers(adminUrls).hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors
@@ -82,7 +82,7 @@ public class SecurityConfig {
                         UsernamePasswordAuthenticationFilter.class
                 );
 
-         return http.build();
+        return http.build();
     }
 
     @Bean

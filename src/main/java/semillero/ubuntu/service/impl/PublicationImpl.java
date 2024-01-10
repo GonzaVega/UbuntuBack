@@ -1,8 +1,12 @@
 package semillero.ubuntu.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import semillero.ubuntu.dto.PublicationDto;
@@ -37,22 +41,34 @@ public class PublicationImpl implements PublicationService {
 
     //guarda la publicacion
     @Override
-    public ResponseEntity<?> createPublication(PublicationDto publicationDTO, Authentication authentication){
+    public ResponseEntity<?> createPublication(PublicationDto publicationDTO){
         //get the user id from the spring security sesion
         //Authentication
-        //Authentication authenticationn = SecurityContextHolder.getContext().getAuthentication();
-        //UserEntity currentUser = (UserEntity) authentication.getPrincipal();
-//        String username = currentUser.getUsername();
-//
-//        System.out.println("username: " + username );
-        String username  = authentication.getName();
-        System.out.println("currentUser: " + authentication.getPrincipal() );
-        Optional<UserEntity> currentUser = UserRepository.findByEmail(username);
+        Authentication authenticationn = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = null;
+        UserEntity currentUser2 = null;
+        if (authenticationn != null && authenticationn.isAuthenticated()) {
+            Object principal = authenticationn.getPrincipal();
+
+            if (principal instanceof UserDetails) {
+                email = ((UserDetails) principal).getUsername();
+            }
+            if (StringUtils.isBlank(email) || email == null)  {
+                return new ResponseEntity<>("No se encontró usuario para asignar a la publicación", HttpStatus.BAD_REQUEST);
+            }
+            else{
+                currentUser2 = UserRepository.findByEmail(email).orElse(null);
+            }
+        }
 
         // Mapear DTO a entidad
         Publication publication = publicationMapper.mapDtoToEntity(publicationDTO);
+        publication.setUser(currentUser2);
 
-        publication.setUser(currentUser.get());
+        if (StringUtils.isBlank(publicationDTO.getTitle()) || StringUtils.isBlank(publicationDTO.getDescription()) || "undefined".equals(publicationDTO.getTitle()) || "undefined".equals(publicationDTO.getDescription()))  {
+            return new ResponseEntity<>("Titulo y descripción no pueden estar vacios", HttpStatus.BAD_REQUEST);
+        }
 
         try {
             List<MultipartFile> newImages = List.of(publicationDTO.getMultipartImages());                               //convert array multipart to list of images multipart
@@ -74,7 +90,6 @@ public class PublicationImpl implements PublicationService {
 
         // Persistir la entidad
         publicationRepository.save(publication);
-
 
         return ResponseEntity.ok(publication);
     }
