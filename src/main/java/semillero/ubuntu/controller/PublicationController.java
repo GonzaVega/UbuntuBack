@@ -56,15 +56,14 @@ public class PublicationController {
             @RequestParam("multipartImages") MultipartFile[] multipartImages,
             @RequestParam("title") String title,
             @RequestParam("description") String description,
-            @PathVariable Long id,
-            Authentication authentication) {
+            @PathVariable Long id) {
         //build dto from parameters
         PublicationDto publicationDto = new PublicationDto();
         publicationDto.setTitle(title);
         publicationDto.setDescription(description);
         publicationDto.setMultipartImages(multipartImages);
 
-        return publicationService.updatePublication(publicationDto,id,authentication);
+        return publicationService.updatePublication(publicationDto,id);
     }
 
     @GetMapping

@@ -47,7 +47,7 @@ public class PublicationImpl implements PublicationService {
         Authentication authenticationn = SecurityContextHolder.getContext().getAuthentication();
 
         String email = null;
-        UserEntity currentUser2 = null;
+        UserEntity currentUser = null;
         if (authenticationn != null && authenticationn.isAuthenticated()) {
             Object principal = authenticationn.getPrincipal();
 
@@ -58,13 +58,13 @@ public class PublicationImpl implements PublicationService {
                 return new ResponseEntity<>("No se encontró usuario para asignar a la publicación", HttpStatus.BAD_REQUEST);
             }
             else{
-                currentUser2 = UserRepository.findByEmail(email).orElse(null);
+                currentUser = UserRepository.findByEmail(email).orElse(null);
             }
         }
 
         // Mapear DTO a entidad
         Publication publication = publicationMapper.mapDtoToEntity(publicationDTO);
-        publication.setUser(currentUser2);
+        publication.setUser(currentUser);
 
         if (StringUtils.isBlank(publicationDTO.getTitle()) || StringUtils.isBlank(publicationDTO.getDescription()) || "undefined".equals(publicationDTO.getTitle()) || "undefined".equals(publicationDTO.getDescription()))  {
             return new ResponseEntity<>("Titulo y descripción no pueden estar vacios", HttpStatus.BAD_REQUEST);
@@ -95,10 +95,27 @@ public class PublicationImpl implements PublicationService {
     }
 
     @Override
-    public ResponseEntity<?> updatePublication(PublicationDto publicationDTO, Long id, Authentication authentication){
+    public ResponseEntity<?> updatePublication(PublicationDto publicationDTO, Long id){
 
-        String username  = authentication.getName();                                                                    // usuario logueado
-        Optional<UserEntity> currentUser = UserRepository.findByEmail(username);
+        //get the user id from the spring security sesion
+        //Authentication
+        Authentication authenticationn = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = null;
+        UserEntity currentUser = null;
+        if (authenticationn != null && authenticationn.isAuthenticated()) {
+            Object principal = authenticationn.getPrincipal();
+
+            if (principal instanceof UserDetails) {
+                email = ((UserDetails) principal).getUsername();
+            }
+            if (StringUtils.isBlank(email) || email == null)  {
+                return new ResponseEntity<>("No se encontró usuario para asignar a la publicación", HttpStatus.BAD_REQUEST);
+            }
+            else{
+                currentUser = UserRepository.findByEmail(email).orElse(null);
+            }
+        }
 
         Optional<Publication> publicationToUpdate = publicationRepository.findById(id);                                 // publicación a actualizar
 
@@ -111,7 +128,7 @@ public class PublicationImpl implements PublicationService {
         Publication publicationEntity = publicationToUpdate.get();
         publicationEntity.setTitle(publicationDTO.getTitle());
         publicationEntity.setDescription(publicationDTO.getDescription());
-        publicationEntity.setUser(currentUser.get());                                                                   //Si otro usuario administrador cambia la publicación, actualizamos el usuario
+        publicationEntity.setUser(currentUser);                                                                   //Si otro usuario administrador cambia la publicación, actualizamos el usuario
 
         try {
             List<MultipartFile> newImages = List.of(publicationDTO.getMultipartImages());

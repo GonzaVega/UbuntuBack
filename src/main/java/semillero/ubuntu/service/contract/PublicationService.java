@@ -11,7 +11,7 @@ import java.util.List;
 public interface PublicationService {
     //Publication createPublication(Publication publication);
     ResponseEntity<?> createPublication(PublicationDto publicationDTO);
-    ResponseEntity<?> updatePublication(PublicationDto publicationDTO, Long id, Authentication authentication);
+    ResponseEntity<?> updatePublication(PublicationDto publicationDTO, Long id);
     ResponseEntity<Object> getPublication(Long id);
     List<Publication> getAllPublication();
     void increaseViews(Long id);
