@@ -17,11 +17,13 @@ public interface MicroentrepreneurshipMapper {
     @Mapping(target = "images", ignore = false)
     Microentrepreneurship mapToEntity(MicroentrepreneurshipDto microentrepreneurshipDto);
 
-    @Mapping(target = "images", ignore = true)
+    @Mapping(target = "images", ignore = false)
     MicroentrepreneurshipDto mapEntityToDto(Microentrepreneurship microentrepreneurship);
 
+    @Mapping(target = "images", ignore = false)
     List<MicroentrepreneurshipDto> entityListToDtoList(List<Microentrepreneurship> microentrepreneurships);
 
+    @Mapping(target = "images", ignore = false)
     List<Microentrepreneurship> dtoListToEntityList(List<MicroentrepreneurshipDto> microentrepreneurshipDtos);
 
 }
