@@ -47,7 +47,7 @@ public class PublicationImpl implements PublicationService {
         Authentication authenticationn = SecurityContextHolder.getContext().getAuthentication();
 
         String email = null;
-        UserEntity currentUser = null;
+        UserEntity currentUser2 = null;
         if (authenticationn != null && authenticationn.isAuthenticated()) {
             Object principal = authenticationn.getPrincipal();
 
@@ -58,13 +58,13 @@ public class PublicationImpl implements PublicationService {
                 return new ResponseEntity<>("No se encontró usuario para asignar a la publicación", HttpStatus.BAD_REQUEST);
             }
             else{
-                currentUser = UserRepository.findByEmail(email).orElse(null);
+                currentUser2 = UserRepository.findByEmail(email).orElse(null);
             }
         }
 
         // Mapear DTO a entidad
         Publication publication = publicationMapper.mapDtoToEntity(publicationDTO);
-        publication.setUser(currentUser);
+        publication.setUser(currentUser2);
 
         if (StringUtils.isBlank(publicationDTO.getTitle()) || StringUtils.isBlank(publicationDTO.getDescription()) || "undefined".equals(publicationDTO.getTitle()) || "undefined".equals(publicationDTO.getDescription()))  {
             return new ResponseEntity<>("Titulo y descripción no pueden estar vacios", HttpStatus.BAD_REQUEST);

@@ -79,4 +79,16 @@ public class MessageController {
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("all")
+    public ResponseEntity<?> getAllMessages() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Message> messages = messageService.getAllMessages();
+            return new ResponseEntity<>(messages, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
 }

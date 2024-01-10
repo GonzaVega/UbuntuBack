@@ -8,17 +8,14 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import semillero.ubuntu.entities.Message;
 import semillero.ubuntu.entities.Microentrepreneurship;
-import semillero.ubuntu.entities.UserEntity;
 import semillero.ubuntu.enums.Management;
 import semillero.ubuntu.repository.MessageRepository;
 import semillero.ubuntu.repository.MicroentrepreneurshipRepository;
 import semillero.ubuntu.service.contract.MessageService;
-import semillero.ubuntu.service.impl.EmailSender;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -106,5 +103,15 @@ public class MessageServiceImpl implements MessageService {
         }
 
         return changeStatus;
+    }
+
+    @Override
+    public List<Message> getAllMessages() {
+        logger.info("Get All Messages");
+        List<Message> messages = messageRepository.findAll();
+        if (messages.isEmpty()) {
+            throw new EntityNotFoundException("No messages found");
+        }
+        return messages;
     }
 }
