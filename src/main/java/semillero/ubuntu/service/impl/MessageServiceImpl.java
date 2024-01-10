@@ -15,7 +15,9 @@ import semillero.ubuntu.repository.MicroentrepreneurshipRepository;
 import semillero.ubuntu.service.contract.MessageService;
 import semillero.ubuntu.service.impl.EmailSender;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,16 +52,27 @@ public class MessageServiceImpl implements MessageService {
         // Envia un correo electrónico a todos los usuarios con el rol "admin"
         List<String> adminUsers = userService.getAllAdminEmails();
 
-        String fullName = message.getFullName();
-        String microentrepreneurshipName = message.getMicroentrepreneurship().getName();
-        String messageContent = "<img src='/Resources/logo.webp'/> El inversionista " + fullName + " quiere invertir en el microemprendimiento: " +
-                microentrepreneurshipName + ".\n\n" + "Mensaje: " + message.getMessage();
 
-        for (String adminEmail : adminUsers) {
-            //emailService.sendEmail(adminEmail, "Contacto inversionista", messageContent);
-            //System.out.println("Email enviado a: " + adminEmail);
-        }
-        emailService.sendEmail("nodoycorreos@gmail.com", "Contacto inversionista", messageContent);
+//        Data emailData = new Data();
+//        emailData.setFullName(message.getFullName());
+//        emailData.setMicroentrepreneurshipName(message.getMicroentrepreneurship().getName());
+//        emailData.setMessageContent("El inversionista " + emailData.getFullName() +
+//                " quiere invertir en el microemprendimiento: " +
+//                emailData.getMicroentrepreneurshipName() +
+//                ".\n\nMensaje: " + message.getMessage());
+        Map<String, Object> emailData = new HashMap<>();
+        emailData.put("fullName", message.getFullName());
+        emailData.put("microentrepreneurshipName", message.getMicroentrepreneurship().getName());
+        emailData.put("messageContent", message.getMessage());
+
+
+//        for (String adminEmail : adminUsers) {
+//            System.out.println("Email enviado a: " + adminEmail);
+//        }
+
+// Llama al método sendEmail con el objeto Data
+        emailService.sendEmail("nodoycorreos@gmail.com", "Contacto inversionista", "plantillaCorreo", emailData);
+        //emailService.sendEmail("nodoycorreos@gmail.com", "Contacto inversionista", messageContent);
 
         // Guarda el mensaje
         return messageRepository.save(message);

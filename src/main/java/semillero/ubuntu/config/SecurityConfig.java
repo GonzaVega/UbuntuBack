@@ -55,7 +55,8 @@ public class SecurityConfig {
             new AntPathRequestMatcher("/api/v1/microentrepreneurship/{id}","GET"),
             new AntPathRequestMatcher("/api/v1/microentrepreneurship/find/**","GET"),
             new AntPathRequestMatcher("/api/v1/microentrepreneurship/find/category/**","GET"),
-            new AntPathRequestMatcher("/api/v1/microentrepreneurship/count/categories","GET")
+            new AntPathRequestMatcher("/api/v1/microentrepreneurship/count/categories","GET"),
+            new AntPathRequestMatcher("/resources/**")
             );
 
 
@@ -67,8 +68,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
                                 .requestMatchers(publicUrls).permitAll()
-                                .requestMatchers(adminUrls).hasAuthority("ADMIN")
-                        .anyRequest().authenticated()
+                                .requestMatchers(adminUrls).permitAll()
+                        //.anyRequest().authenticated()
                 )
                 .cors(cors -> cors
                         .configurationSource(corsConfigurationSource())
