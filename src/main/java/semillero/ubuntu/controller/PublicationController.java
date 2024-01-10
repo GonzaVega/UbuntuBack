@@ -1,6 +1,8 @@
 package semillero.ubuntu.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -30,17 +32,23 @@ public class PublicationController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createPublication(
-            @RequestParam("multipartImages") MultipartFile[] multipartImages,
+            @RequestParam("images") MultipartFile[] multipartImages,
             @RequestParam("title") String title,
-            @RequestParam("description") String description,
-            Authentication authentication) {
+            @RequestParam("description") String description
+//            ,@RequestParam("email") String email
+    ) {
+
+        if ("undefined".equals(multipartImages)){
+            return new ResponseEntity<>("El campo de Imágenes no puede estar vacio", HttpStatus.BAD_REQUEST);
+        }
+
         //build dto from parameters
         PublicationDto publicationDto = new PublicationDto();
         publicationDto.setTitle(title);
         publicationDto.setDescription(description);
         publicationDto.setMultipartImages(multipartImages);
 
-        return publicationService.createPublication(publicationDto,authentication);
+        return publicationService.createPublication(publicationDto);
     }
 
     @PutMapping("/update/{id}")
@@ -48,15 +56,14 @@ public class PublicationController {
             @RequestParam("multipartImages") MultipartFile[] multipartImages,
             @RequestParam("title") String title,
             @RequestParam("description") String description,
-            @PathVariable Long id,
-            Authentication authentication) {
+            @PathVariable Long id) {
         //build dto from parameters
         PublicationDto publicationDto = new PublicationDto();
         publicationDto.setTitle(title);
         publicationDto.setDescription(description);
         publicationDto.setMultipartImages(multipartImages);
 
-        return publicationService.updatePublication(publicationDto,id,authentication);
+        return publicationService.updatePublication(publicationDto,id);
     }
 
     @GetMapping

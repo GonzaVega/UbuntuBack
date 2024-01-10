@@ -52,14 +52,6 @@ public class MessageServiceImpl implements MessageService {
         // Envia un correo electrónico a todos los usuarios con el rol "admin"
         List<String> adminUsers = userService.getAllAdminEmails();
 
-
-//        Data emailData = new Data();
-//        emailData.setFullName(message.getFullName());
-//        emailData.setMicroentrepreneurshipName(message.getMicroentrepreneurship().getName());
-//        emailData.setMessageContent("El inversionista " + emailData.getFullName() +
-//                " quiere invertir en el microemprendimiento: " +
-//                emailData.getMicroentrepreneurshipName() +
-//                ".\n\nMensaje: " + message.getMessage());
         Map<String, Object> emailData = new HashMap<>();
         emailData.put("fullName", message.getFullName());
         emailData.put("microentrepreneurshipName", message.getMicroentrepreneurship().getName());
@@ -67,12 +59,12 @@ public class MessageServiceImpl implements MessageService {
 
 
 //        for (String adminEmail : adminUsers) {
-//            System.out.println("Email enviado a: " + adminEmail);
+//            emailService.sendEmail(adminEmail, "Contacto inversionista", messageContent);
 //        }
 
 // Llama al método sendEmail con el objeto Data
-        emailService.sendEmail("nodoycorreos@gmail.com", "Contacto inversionista", "plantillaCorreo", emailData);
-        //emailService.sendEmail("nodoycorreos@gmail.com", "Contacto inversionista", messageContent);
+        //emailService.sendEmail("nodoycorreos@gmail.com", "Contacto inversionista", "plantillaCorreo", emailData);
+        //emailService.sendEmaiWithTemplate("nodoycorreos@gmail.com", "Contacto inversionista", messageContent);
 
         // Guarda el mensaje
         return messageRepository.save(message);

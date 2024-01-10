@@ -1,5 +1,4 @@
 package semillero.ubuntu.service.impl;
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -8,7 +7,9 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.context.IContext;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+
 
 import java.util.Map;
 //
@@ -26,7 +27,7 @@ public class EmailSender {
     private TemplateEngine templateEngine;
 
 
-    public void sendEmail(String destinatario, String asunto, String template, Map<String, Object> message) {
+    public void sendEmaiWithTemplate(String destinatario, String asunto, String template, Map<String, Object> message) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = null;
         Context context = new Context();
@@ -54,27 +55,14 @@ public class EmailSender {
 //            e.printStackTrace();
 //        }
     }
-}
 
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-//import org.springframework.mail.SimpleMailMessage;
-//import org.springframework.mail.javamail.JavaMailSender;
-//import org.springframework.stereotype.Service;
-//
-//@Service
-//@EnableAutoConfiguration
-//public class EmailSender {
-//
-//    @Autowired
-//    private JavaMailSender javaMailSender;
-//
-//    public void sendEmail(String to, String subject, String body) {
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo(to);
-//        message.setSubject(subject);
-//        message.setText(body);
-//
-//        javaMailSender.send(message);
-//    }
-//}
+
+    public void sendEmail(String to, String subject, String body) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+
+        javaMailSender.send(message);
+    }
+}
