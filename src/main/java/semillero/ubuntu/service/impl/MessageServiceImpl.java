@@ -52,12 +52,12 @@ public class MessageServiceImpl implements MessageService {
 
         String fullName = message.getFullName();
         String microentrepreneurshipName = message.getMicroentrepreneurship().getName();
-        String messageContent = "El inversionista " + fullName + " quiere invertir en el microemprendimiento: " +
+        String messageContent = "<img src='/Resources/logo.webp'/> El inversionista " + fullName + " quiere invertir en el microemprendimiento: " +
                 microentrepreneurshipName + ".\n\n" + "Mensaje: " + message.getMessage();
 
         for (String adminEmail : adminUsers) {
             //emailService.sendEmail(adminEmail, "Contacto inversionista", messageContent);
-            System.out.println("Email enviado a: " + adminEmail);
+            //System.out.println("Email enviado a: " + adminEmail);
         }
         emailService.sendEmail("nodoycorreos@gmail.com", "Contacto inversionista", messageContent);
 
