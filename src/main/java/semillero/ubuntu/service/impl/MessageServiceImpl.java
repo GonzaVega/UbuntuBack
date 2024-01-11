@@ -175,7 +175,7 @@ public class MessageServiceImpl implements MessageService {
                 "                  <td valign=\"top\" align=\"center\" style=\"padding:0;Margin:0;width:570px\">\n" +
                 "                   <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px\">\n" +
                 "                     <tr style=\"border-collapse:collapse\">\n" +
-                "                      <td class=\"es-m-p0l\" align=\"center\" style=\"padding:0;Margin:0;font-size:0\"><a href=\"https://viewstripo.email\" target=\"_blank\" style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#999999;font-size:14px\"><img src=\"https://fbxcbof.stripocdn.email/content/guids/CABINET_80b8a9b0a2c8b722c28f7fa587b3a2af/images/53081509623983563.png\" alt=\"Bookkeeping logo\" title=\"Bookkeeping logo\" width=\"113\" style=\"display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic\"></a></td>\n" +
+                "                      <td class=\"es-m-p0l\" align=\"center\" style=\"padding:0;Margin:0;font-size:0\"><a href=\"https://viewstripo.email\" target=\"_blank\" style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#999999;font-size:14px\"><img src=\"https://res.cloudinary.com/dworm9bnx/image/upload/v1704985184/Ubuntu_Marcas-01_au4xyi.webp\" alt=\"Bookkeeping logo\" title=\"Ubuntu logo\" width=\"113\" style=\"display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic\"></a></td>\n" +
                 "                     </tr>\n" +
                 "                   </table></td>\n" +
                 "                 </tr>\n" +
@@ -197,8 +197,8 @@ public class MessageServiceImpl implements MessageService {
                 "                     <tr style=\"border-collapse:collapse\">\n" +
                 "                      <td align=\"center\" style=\"padding:0;Margin:0;padding-bottom:30px\"><h1 style=\"Margin:0;line-height:36px;mso-line-height-rule:exactly;font-family:tahoma, verdana, segoe, sans-serif;font-size:30px;font-style:normal;font-weight:normal;color:#ffffff\">UBUNTU</h1></td>\n" +
                 "                     </tr>\n" +
-                "                     <tr style=\"border-collapse:collapse\">\n" +
-                "                      <td align=\"center\" style=\"padding:0;Margin:0;font-size:0\"><a target=\"_blank\" href=\"https://viewstripo.email\" style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#02951E;font-size:14px\"><img class=\"adapt-img\" src=\"https://fbxcbof.stripocdn.email/content/guids/CABINET_bb36862d20b7c40f133f228331c6763f/images/1021509960052874.png\" alt=\"Clock\" title=\"Clock\" width=\"600\" style=\"display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic\"></a></td>\n" +
+                "                     <tr style=\"border-collapse:collapse; color:\">\n" +
+                "                      <td align=\"center\" style=\"padding:0;Margin:0;font-size:0\"><a target=\"_blank\" href=\"https://viewstripo.email\" style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#02951E;font-size:14px\"><img class=\"adapt-img\" src=\"https://i0.wp.com/diariosanrafael.com.ar/wp-content/uploads/2020/08/curso-online-de-agroecologia_amp_primaria_1_1560503079.jpg?fit=1024%2C1024&ssl=1\" alt=\"Clock\" title=\"Clock\" width=\"600\" style=\"display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic\"></a></td>\n" +
                 "                     </tr>\n" +
                 "                   </table></td>\n" +
                 "                 </tr>\n" +
@@ -248,7 +248,7 @@ public class MessageServiceImpl implements MessageService {
                 "                  <td class=\"es-m-p20b\" align=\"left\" style=\"padding:0;Margin:0;width:260px\">\n" +
                 "                   <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px\">\n" +
                 "                     <tr style=\"border-collapse:collapse\">\n" +
-                "                      <td align=\"left\" style=\"padding:0;Margin:0\"><p style=\"Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:tahoma, verdana, segoe, sans-serif;line-height:21px;color:#666666;font-size:14px\"><span style=\"font-weight:bold;line-height:150%\">Mark Backer</span>, from Bookkeeping<br></p></td>\n" +
+                "                      <td align=\"left\" style=\"padding:0;Margin:0\"><p style=\"Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:tahoma, verdana, segoe, sans-serif;line-height:21px;color:#666666;font-size:14px\"><span style=\"font-weight:bold;line-height:150%\">Equipo UBUNTU</span>, financiamiento sostenible<br></p></td>\n" +
                 "                     </tr>\n" +
                 "                   </table></td>\n" +
                 "                 </tr>\n" +

@@ -58,8 +58,6 @@ public class Message {
 
     @PrePersist
     void preManagement() {
-
-            management = Management.UNMANAGED;
-
+        management = Management.UNMANAGED;
     }
 }
