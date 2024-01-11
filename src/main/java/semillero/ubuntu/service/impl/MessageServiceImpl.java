@@ -37,8 +37,8 @@ public class MessageServiceImpl implements MessageService {
     private UserServiceImpl userService;
 
 
-    @Value("${frontend.url")
-    private String frontUrl;
+    @Value("${frontend.url}")
+    private String FRONT_URL;
 
     @Override
     public Message saveMessage(Long microentrepreneurshipId, Message message) {
@@ -61,17 +61,11 @@ public class MessageServiceImpl implements MessageService {
         emailData.put("messageContent", message.getMessage());
 
 
-//        for (String adminEmail : adminUsers) {
-//            emailService.sendEmail(adminEmail, "Contacto inversionista", messageContent);
-//        }
-
-// Llama al método sendEmail con el objeto Data
-        //emailService.sendEmail("nodoycorreos@gmail.com", "Contacto inversionista", "plantillaCorreo", emailData);
-        //emailService.sendEmaiWithTemplate("nodoycorreos@gmail.com", "Contacto inversionista", messageContent);
-
         String content = createMessageTemplate(message.getFullName(), message.getPhone(), message.getEmail(), message.getMicroentrepreneurship().getName(), message.getMessage());
 
-        emailService.sendEmail("nodoycorreos@gmail.com", "Contacto inversionista", content);
+        for (String adminEmail : adminUsers) {
+            emailService.sendEmail(adminEmail, "Contacto inversionista", content);
+        }
 
         // Guarda el mensaje
         return messageRepository.save(message);
@@ -79,9 +73,9 @@ public class MessageServiceImpl implements MessageService {
 
     // método para crear plantilla para el correo
     public String createMessageTemplate(String fullName, String phone, String email, String microentrepreneurshipName, String messageContent) {
-        String stringUrl = frontUrl + "/admin/solicitudes-de-contacto";
+        String stringUrl = FRONT_URL + "/admin/solicitudes-de-contacto";
 
-        String mailContent = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" +
+        String firstPart = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" +
                 "<html dir=\"ltr\" xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" lang=\"en\" style=\"padding:0;Margin:0\">\n" +
                 " <head>\n" +
                 "  <meta charset=\"UTF-8\">\n" +
@@ -236,9 +230,13 @@ public class MessageServiceImpl implements MessageService {
                 "                      <td class=\"es-m-txt-c\" align=\"left\" style=\"padding:0;Margin:0;padding-top:10px\"><p style=\"Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:tahoma, verdana, segoe, sans-serif;line-height:21px;color:#666666;font-size:14px\">Puedes contactarle a través de su número teléfónico: "+ phone +" o por medio de su correo: "+ email +". Recuerda seguir las mejores prácticas de seguridad y privacidad al gestionar esta información. Si necesitas más detalles o asistencia sobre la correcta gestión de un microemprendimiento, revisa el siguiente enlace: <a target=\"_blank\" style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#50b948;font-size:14px\" href=\"https://viewstripo.email/\">Gestión de los microemprendimientos</a>.<br></p></td><br></p></td>\n" +
                 "                     </tr>\n" +
                 "                     <tr style=\"border-collapse:collapse\">\n" +
-                "                      <td align=\"left\" style=\"padding:0;Margin:0;padding-right:10px;padding-top:20px;padding-bottom:20px\">"+"" +
-                "                      <span class=\"es-button-border\" style=\"border-style:solid;border-color:#50B948;background:#2CB543;border-width:0px;display:inline-block;border-radius:4px;width:auto\"><a href=\""+stringUrl+"\" class=\"es-button\" target=\"_blank\" style=\"mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:16px;display:inline-block;background:#50B948;border-radius:4px;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-weight:normal;font-style:normal;line-height:19px;width:auto;text-align:center;padding:10px 20px 10px 20px;mso-padding-alt:0;mso-border-alt:10px solid #50B948\">Gestionar emprendimiento</a></span></td>\n" +
-                "                     </tr>\n" +
+                "                      <td align=\"left\" style=\"padding:0;Margin:0;padding-right:10px;padding-top:20px;padding-bottom:20px\">";
+
+        StringBuilder secondPart = new StringBuilder();
+        secondPart.append("<span class=\"es-button-border\" style=\"border-style:solid;border-color:#50B948;background:#2CB543;border-width:0px;display:inline-block;border-radius:4px;width:auto\">");
+        secondPart.append("<a href=\"").append(stringUrl).append("\" class=\"es-button\" target=\"_blank\" style=\"mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:16px;display:inline-block;background:#50B948;border-radius:4px;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-weight:normal;font-style:normal;line-height:19px;width:auto;text-align:center;padding:10px 20px 10px 20px;mso-padding-alt:0;mso-border-alt:10px solid #50B948\">Gestiona este emprendimiento/a></span>");
+
+        String thirdPart = "                     </tr>\n" +
                 "                   </table></td>\n" +
                 "                 </tr>\n" +
                 "               </table></td>\n" +
@@ -353,9 +351,13 @@ public class MessageServiceImpl implements MessageService {
                 " </body>\n" +
                 "</html>";
 
+        StringBuilder mailContent = new StringBuilder();
+        mailContent.append(firstPart);
+        mailContent.append(secondPart);
+        mailContent.append(thirdPart);
 
 
-        return mailContent;
+        return mailContent.toString();
     }
 
     @Override
