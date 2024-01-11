@@ -80,7 +80,7 @@ public class MessageController {
         }
     }
 
-    @GetMapping("all")
+    @GetMapping("/all")
     public ResponseEntity<?> getAllMessages() {
         Map<String, Object> response = new HashMap<>();
         try {
