@@ -13,4 +13,6 @@ public interface MessageService {
     List<Message> getMessagesByMicroentrepreneurshipId(Long microentrepreneurshipId);
 
     Message changeManagementStatus(Long messageId);
+
+    List<Message> getAllMessages();
 }

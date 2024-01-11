@@ -56,8 +56,7 @@ public class SecurityConfig {
             new AntPathRequestMatcher("/api/v1/microentrepreneurship/{id}","GET"),
             new AntPathRequestMatcher("/api/v1/microentrepreneurship/find/**","GET"),
             new AntPathRequestMatcher("/api/v1/microentrepreneurship/find/category/**","GET"),
-            new AntPathRequestMatcher("/api/v1/microentrepreneurship/count/categories","GET"),
-            new AntPathRequestMatcher("/resources/**")
+            new AntPathRequestMatcher("/api/v1/microentrepreneurship/count/categories","GET")
             );
 
 
