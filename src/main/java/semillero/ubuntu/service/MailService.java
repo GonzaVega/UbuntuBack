@@ -28,7 +28,8 @@ public class MailService {
             } catch (MessagingException e) {
                 throw new RuntimeException(e);
             }
-            helper.setFrom("kaviursaa123@gmail.com");
+            //helper.setFrom("kaviursaa123@gmail.com"); this is the correct email for sending admins' contact requests
+            helper.setFrom("kaviursaa12@gmail.com");
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(content,true);

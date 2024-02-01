@@ -1,6 +1,7 @@
 package semillero.ubuntu.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ public class MessageServiceImpl implements MessageService {
     @Value("${frontend.url}")
     private String FRONT_URL;
 
+
     @Override
     public Message saveMessage(Long microentrepreneurshipId, Message message) {
         logger.info("Save Message");
@@ -73,7 +75,7 @@ public class MessageServiceImpl implements MessageService {
 
     // método para crear plantilla para el correo
     public String createMessageTemplate(String fullName, String phone, String email, String microentrepreneurshipName, String messageContent) {
-        String stringUrl = FRONT_URL + "/admin/solicitudes-de-contacto";
+        String stringUrl = FRONT_URL + "/admin/solicitudes-de-contacto/";
 
         String firstPart = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n" +
                 "<html dir=\"ltr\" xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" lang=\"en\" style=\"padding:0;Margin:0\">\n" +
@@ -175,7 +177,7 @@ public class MessageServiceImpl implements MessageService {
                 "                  <td valign=\"top\" align=\"center\" style=\"padding:0;Margin:0;width:570px\">\n" +
                 "                   <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px\">\n" +
                 "                     <tr style=\"border-collapse:collapse\">\n" +
-                "                      <td class=\"es-m-p0l\" align=\"center\" style=\"padding:0;Margin:0;font-size:0\"><a href=\"https://viewstripo.email\" target=\"_blank\" style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#999999;font-size:14px\"><img src=\"https://res.cloudinary.com/dworm9bnx/image/upload/v1704985184/Ubuntu_Marcas-01_au4xyi.webp\" alt=\"Bookkeeping logo\" title=\"Ubuntu logo\" width=\"113\" style=\"display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic\"></a></td>\n" +
+                "                      <td class=\"es-m-p0l\" align=\"center\" style=\"padding:0;Margin:0;font-size:0\"><a href=\"https://viewstripo.email\" target=\"_blank\" style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#999999;font-size:14px\"><img src=\"https://res.cloudinary.com/dworm9bnx/image/upload/v1704993258/Ubuntu_Marcas-03_z4wpjd.png\" alt=\"Bookkeeping logo\" title=\"Ubuntu logo\" width=\"113\" style=\"display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic\"></a></td>\n" +
                 "                     </tr>\n" +
                 "                   </table></td>\n" +
                 "                 </tr>\n" +
@@ -187,7 +189,7 @@ public class MessageServiceImpl implements MessageService {
                 "       <table class=\"es-content\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;table-layout:fixed !important;width:100%\">\n" +
                 "         <tr style=\"border-collapse:collapse\">\n" +
                 "          <td class=\"es-adaptive\" align=\"center\" style=\"padding:0;Margin:0\">\n" +
-                "           <table class=\"es-content-body\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#8796a3;width:600px\" cellspacing=\"0\" cellpadding=\"0\" bgcolor=\"#8796a3\" align=\"center\">\n" +
+                "           <table class=\"es-content-body\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#8796a3;width:600px\" cellspacing=\"0\" cellpadding=\"0\" bgcolor=\"#093C59\" align=\"center\">\n" +
                 "             <tr style=\"border-collapse:collapse\">\n" +
                 "              <td align=\"left\" style=\"padding:0;Margin:0;padding-top:25px\">\n" +
                 "               <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px\">\n" +
@@ -195,7 +197,7 @@ public class MessageServiceImpl implements MessageService {
                 "                  <td valign=\"top\" align=\"center\" style=\"padding:0;Margin:0;width:600px\">\n" +
                 "                   <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" style=\"mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px\">\n" +
                 "                     <tr style=\"border-collapse:collapse\">\n" +
-                "                      <td align=\"center\" style=\"padding:0;Margin:0;padding-bottom:30px\"><h1 style=\"Margin:0;line-height:36px;mso-line-height-rule:exactly;font-family:tahoma, verdana, segoe, sans-serif;font-size:30px;font-style:normal;font-weight:normal;color:#ffffff\">UBUNTU</h1></td>\n" +
+                "                      <td align=\"center\" style=\"padding:0;Margin:0;padding-bottom:30px\"><h1 style=\"Margin:0;line-height:36px;mso-line-height-rule:exactly;font-family:tahoma, verdana, segoe, sans-serif;font-size:30px;font-style:normal;font-weight:normal;color:#ffffff\">Transformando Sueños en Oportunidades</h1></td>\n" +
                 "                     </tr>\n" +
                 "                     <tr style=\"border-collapse:collapse; color:\">\n" +
                 "                      <td align=\"center\" style=\"padding:0;Margin:0;font-size:0\"><a target=\"_blank\" href=\"https://viewstripo.email\" style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#02951E;font-size:14px\"><img class=\"adapt-img\" src=\"https://i0.wp.com/diariosanrafael.com.ar/wp-content/uploads/2020/08/curso-online-de-agroecologia_amp_primaria_1_1560503079.jpg?fit=1024%2C1024&ssl=1\" alt=\"Clock\" title=\"Clock\" width=\"600\" style=\"display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic\"></a></td>\n" +
@@ -221,10 +223,10 @@ public class MessageServiceImpl implements MessageService {
                 "                      <td class=\"es-m-txt-c\" align=\"left\" style=\"padding:0;Margin:0\"><h3 style=\"Margin:0;line-height:24px;mso-line-height-rule:exactly;font-family:tahoma, verdana, segoe, sans-serif;font-size:20px;font-style:normal;font-weight:normal;color:#333333\">Hola administrador UBUNTU, tenemos buenas noticias!<br></h3></td>\n" +
                 "                     </tr>\n" +
                 "                     <tr style=\"border-collapse:collapse\">\n" +
-                "                      <td class=\"es-m-txt-c\" align=\"left\" style=\"padding:0;Margin:0;padding-top:10px\"><p style=\"Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:tahoma, verdana, segoe, sans-serif;line-height:21px;color:#666666;font-size:14px\">Alguien ha expresado su interés de invertir en "+ microentrepreneurshipName+" y este es el mensaje que ha dejado:<br></p></td>\n\n" +
+                "                      <td class=\"es-m-txt-c\" align=\"left\" style=\"padding:0;Margin:0;padding-top:10px\"><p style=\"Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:tahoma, verdana, segoe, sans-serif;line-height:21px;color:#666666;font-size:14px\">Alguien ha expresado su interés de invertir en "+ microentrepreneurshipName+" y este es el mensaje que ha dejado:<br><br></p></td>\n\n" +
                 "                     </tr>\n" +
                 "                     <tr style=\"border-collapse:collapse\">\n" +
-                "                      <td esdev-links-color=\"#50b948\" class=\"es-m-txt-c\" align=\"left\" style=\"padding:0;Margin:0;padding-top:5px;padding-bottom:10px\"><p style=\"Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:tahoma, verdana, segoe, sans-serif;line-height:21px;color:#666666;font-size:14px\">\n"+ messageContent +
+                "                      <td esdev-links-color=\"#50b948\" class=\"es-m-txt-c\" align=\"left\" style=\"padding:0;Margin:0;padding-top:5px;padding-bottom:10px\"><p style=\"Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:tahoma, verdana, segoe, sans-serif;line-height:21px;color:#8F9297;font-size:14px;font-style:italic\">\n"+ messageContent +
                 "                     </tr>\n" +
                 "                     <tr style=\"border-collapse:collapse\">\n" +
                 "                      <td class=\"es-m-txt-c\" align=\"left\" style=\"padding:0;Margin:0;padding-top:10px\"><p style=\"Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:tahoma, verdana, segoe, sans-serif;line-height:21px;color:#666666;font-size:14px\">Puedes contactarle a través de su número teléfónico: "+ phone +" o por medio de su correo: "+ email +". Recuerda seguir las mejores prácticas de seguridad y privacidad al gestionar esta información. Si necesitas más detalles o asistencia sobre la correcta gestión de un microemprendimiento, revisa el siguiente enlace: <a target=\"_blank\" style=\"-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:underline;color:#50b948;font-size:14px\" href=\"https://viewstripo.email/\">Gestión de los microemprendimientos</a>.<br></p></td><br></p></td>\n" +
@@ -234,7 +236,7 @@ public class MessageServiceImpl implements MessageService {
 
         StringBuilder secondPart = new StringBuilder();
         secondPart.append("<span class=\"es-button-border\" style=\"border-style:solid;border-color:#50B948;background:#2CB543;border-width:0px;display:inline-block;border-radius:4px;width:auto\">");
-        secondPart.append("<a href=\"").append(stringUrl).append("\" class=\"es-button\" target=\"_blank\" style=\"mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:16px;display:inline-block;background:#50B948;border-radius:4px;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-weight:normal;font-style:normal;line-height:19px;width:auto;text-align:center;padding:10px 20px 10px 20px;mso-padding-alt:0;mso-border-alt:10px solid #50B948\">Gestiona este emprendimiento/a></span>");
+        secondPart.append("<a href=\"").append(stringUrl).append("\" class=\"es-button\" target=\"_blank\" style=\"mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:16px;display:inline-block;background:#50B948;border-radius:4px;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-weight:normal;font-style:normal;line-height:19px;width:auto;text-align:center;padding:10px 20px 10px 20px;mso-padding-alt:0;mso-border-alt:10px solid #50B948\">Gestiona este emprendimiento</a></span>");
 
         String thirdPart = "                     </tr>\n" +
                 "                   </table></td>\n" +
